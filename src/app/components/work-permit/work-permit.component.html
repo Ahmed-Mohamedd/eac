@@ -1,0 +1,539 @@
+
+<div class="work-permit-wrapper">
+
+    <!-- Full-screen overlay during submission -->
+  <app-loading-spinner 
+    *ngIf="isSubmitting"
+    mode="overlay"
+    size="large"
+    message="جاري حفظ البيانات...">
+  </app-loading-spinner>
+
+  <!-- Full-screen overlay while loading permit data -->
+  <app-loading-spinner 
+    *ngIf="isLoadingPermit"
+    mode="overlay"
+    size="large"
+    message="جاري تحميل البيانات...">
+  </app-loading-spinner>
+
+    <div class="page">
+        <form [formGroup]="permitForm" (ngSubmit)="onSubmit()" class="document-container">
+            <!-- Header Section -->
+            <header class="document-header">
+                <div class="logo-container">
+                    <img src="assets/logo.png" alt="Hurghada Airport Logo" class="airport-logo">
+                </div>
+                <div class="header-info">
+                    <div class="work-permit-wrapper">
+                        <div class="page">
+                            <form [formGroup]="permitForm" (ngSubmit)="onSubmit()" class="document-container">
+                                <!-- Header Section -->
+                                <header class="document-header">
+                                    <div class="logo-container">
+                                        <img src="assets/logo.png" alt="Hurghada Airport Logo" class="airport-logo">
+                                    </div>
+                                    <div class="header-info">
+                                        <div class="company-info">
+                                            <h1 class="company-name">الشركة المصرية للمطارات</h1>
+                                            <h2 class="airport-name">مطار الغردقة الدولى</h2>
+                                            <p class="department">االدارة العامة للمطابقة و السالمة</p>
+                                            <p class="subdepartment">إدارة السالمه و الصحة المهنية</p>
+                                        </div>
+                                    </div>
+                                    <h2 class="doc-type">تصـريح عمل <span class="english">WORK PERMIT</span></h2>
+                                </header>
+
+                                <!-- Permission Badge (Only shown when editing existing permit) -->
+                                <div *ngIf="currentPermit" class="permission-indicator">
+                                    <div class="permission-badge" [ngClass]="getPermissionBadgeClass()">
+                                        {{ getPermissionBadgeText() }}
+                                    </div>
+
+                                    <!-- Warning for Completed Permits -->
+                                    <div *ngIf="showCompletedWarning()" class="alert-warning">
+                                        ⚠️ التصاريح المكتملة لا يمكن تعديلها. يرجى الاتصال بالمسؤول إذا كنت بحاجة إلى
+                                        إجراء تصحيحات.
+                                    </div>
+                                </div>
+
+                                <!-- Main Content Area -->
+                                <div class="document-body">
+                                    <!-- Work Location Section -->
+                                    <section class="section" formGroupName="location">
+                                        <h3 class="section-title">موقع العمل</h3>
+                                        <div class="checkbox-group">
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" formControlName="entrance"> مدخل المطار و ساحات
+                                                االنتظار
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" formControlName="airfield"> الحقل الجوي
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" formControlName="buildings"> المباني والملحقات
+                                            </label>
+                                        </div>
+                                    </section>
+
+                                    <!-- Work Nature Section -->
+                                    <section class="section" formGroupName="nature">
+                                        <h3 class="section-title">طبيعة العمل</h3>
+                                        <div class="checkbox-group">
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" formControlName="routine"> عمل روتيني
+                                            </label>
+                                            <label class="checkbox-item">
+                                                <input type="checkbox" formControlName="nonRoutine"> عمل غير روتيني
+                                            </label>
+                                        </div>
+                                    </section>
+
+                                    <!-- Department and Supervisor -->
+                                    <section class="section">
+                                        <h3 class="section-title"> تحت اشراف </h3>
+                                        <div class="info-row-inline">
+                                            <div class="info-field">
+                                                <label>الإدارة <span class="required-mark">*</span></label>
+                                                <!-- Show inline spinner while loading departments -->
+                                                <div *ngIf="isLoadingDepartments" class="loading-container">
+                                                    <app-loading-spinner 
+                                                    size="small"
+                                                    message="جاري تحميل الأقسام...">
+                                                    </app-loading-spinner>
+                                                </div>
+                                                
+                                                <!-- Show dropdown when loaded -->
+                                                <select 
+                                                    *ngIf="!isLoadingDepartments"
+                                                    class="field-input" 
+                                                    formControlName="department" 
+                                                    required>
+                                                    <option *ngFor="let dept of departments" [value]="dept.id">
+                                                    {{ dept.name }}
+                                                    </option>
+                                                </select>
+                                                
+                                                <div class="error-message" *ngIf="isFieldInvalid('department')">
+                                                    {{ getFieldError('department') }}
+                                                </div>
+                                            </div>
+                                            <div class="info-field">
+                                                <label>اسم المهندس/المشرف<span class="required-mark">*</span></label>
+                                                <input type="text" class="field-input" formControlName="supervisor">
+                                                <div class="error-message" *ngIf="isFieldInvalid('supervisor')">
+                                                    {{ getFieldError('supervisor') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <!-- Workers Names -->
+                                    <section class="section">
+                                        <h3 class="section-title">أسماء العاملين</h3>
+                                        <div class="workers-grid" formArrayName="workers">
+                                            <div class="worker-item"
+                                                *ngFor="let worker of workers.controls; let i = index">
+                                                <span>{{i + 1}}-</span>
+                                                <input type="text" class="field-input" [formControlName]="i">
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <!-- Work Timings -->
+                                    <section class="section" formGroupName="timings">
+                                        <h3 class="section-title">توقيتات العمل</h3>
+                                        <div class="timing-grid">
+                                            <div class="timing-row">
+                                                <label>التاريخ:<span class="required-mark">*</span></label>
+                                                <input type="date" class="field-input date" formControlName="date">
+                                                <label>الساعه:<span class="required-mark">*</span></label>
+                                                <input type="time" class="field-input time" formControlName="time">
+                                            </div>
+                                            <div class="error-message" *ngIf="isFieldInvalid('timings.date')">
+                                                {{ getFieldError('timings.date') }}
+                                            </div>
+                                            <div class="error-message" *ngIf="isFieldInvalid('timings.time')">
+                                                {{ getFieldError('timings.time') }}
+                                            </div>
+
+                                            <div class="timing-row-label">
+                                                <label>توقيت انتهاء العمل المتوقع</label>
+                                            </div>
+                                            <div class="timing-row">
+                                                <label>التاريخ:<span class="required-mark">*</span></label>
+                                                <input type="date" class="field-input date"
+                                                    formControlName="expectedEndDate">
+                                                <label>الساعه:<span class="required-mark">*</span></label>
+                                                <input type="time" class="field-input time"
+                                                    formControlName="expectedEndTime">
+                                            </div>
+
+                                            <div class="timing-row-label">
+                                                <label>توقيت انتهاء العمل الفعلي</label>
+                                            </div>
+                                            <div class="timing-row">
+                                                <label>التاريخ:</label>
+                                                <input type="date" class="field-input date"
+                                                    formControlName="actualEndDate">
+                                                <label>الساعه:</label>
+                                                <input type="time" class="field-input time"
+                                                    formControlName="actualEndTime">
+                                            </div>
+
+                                            <div class="timing-row-label">
+                                                <label>فترة العمل اليومى</label>
+                                            </div>
+                                            <div class="timing-row">
+                                                <label>من:<span class="required-mark">*</span></label>
+                                                <input type="time" class="field-input time"
+                                                    formControlName="dailyWorkStart">
+                                                <label>إلى:<span class="required-mark">*</span></label>
+                                                <input type="time" class="field-input time"
+                                                    formControlName="dailyWorkEnd">
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <!-- Work Description -->
+                                    <div class="full-field">
+                                        <label>وصف العمل<span class="required-mark">*</span></label>
+                                        <textarea class="field-input large" formControlName="workDescription"> </textarea>
+                                        <div class="error-message" *ngIf="isFieldInvalid('workDescription')">
+                                            {{ getFieldError('workDescription') }}
+                                        </div>
+                                    </div>
+
+                                    <div class="full-field">
+                                        <label>موقع العمل</label>
+                                        <input type="text" class="field-input" formControlName="workLocation">
+                                    </div>
+
+                                    <div class="full-field">
+                                        <label>العدد المستخدمة</label>
+                                        <input type="text" class="field-input" formControlName="equipment">
+                                    </div>
+
+                                    <!-- Hot Work Section -->
+                                    <section class="section" formGroupName="hotWork">
+                                        <h3 class="section-title">األعمال الساخنه <span class="english">HOT WORK</span>
+                                        </h3>
+                                        <div class="info-row-inline">
+                                            <label>نوع العملية</label>
+                                            <label class="checkbox-item"><input type="checkbox"
+                                                    formControlName="welding">
+                                                لحام</label>
+                                            <label class="checkbox-item"><input type="checkbox"
+                                                    formControlName="cutting">
+                                                قطع</label>
+                                            <label>أخري: <input type="text" class="field-input inline"
+                                                    formControlName="other"></label>
+                                        </div>
+                                    </section>
+
+                                    <!-- Heights Work -->
+                                    <section class="section" formGroupName="heights">
+                                        <h3 class="section-title">العمل على ارتفاعات</h3>
+                                        <div class="full-field">
+                                            <label>أعلى ارتفاع متوقع للعمل عليه<span class="required-mark">*</span></label>
+                                            <input type="text" class="field-input" formControlName="maxHeight">
+                                            <div class="error-message" *ngIf="isFieldInvalid('heights.maxHeight')">
+                                                {{ getFieldError('heights.maxHeight') }}
+                                            </div>
+                                        </div>
+                                        <div class="full-field">
+                                            <label>وصف السقاالت و الساللم المستخدمة</label>
+                                            <input type="text" class="field-input" formControlName="scaffoldingDesc">
+                                        </div>
+                                    </section>
+
+                                    <!-- Confined Spaces -->
+                                    <section class="section" formGroupName="confinedSpaces">
+                                        <h3 class="section-title">األماكن المغلقة</h3>
+                                        <div class="full-field">
+                                            <label>وصف المكان المغلق (الشكل والموقع)</label>
+                                            <input type="text" class="field-input" formControlName="description">
+                                        </div>
+                                        <div class="full-field">
+                                            <label>وسائل التهوية</label>
+                                            <input type="text" class="field-input" formControlName="ventilation">
+                                        </div>
+                                    </section>
+
+                                    <!-- Potential Hazards -->
+                                    <div class="full-field">
+                                        <label>المخاطر المحتمله آثناء العمل</label>
+                                        <textarea class="field-input large" formControlName="hazards"></textarea>
+                                    </div>
+
+                                    <!-- Data filled by worker -->
+                                    <section class="section highlighted" formGroupName="safetyRequirements">
+                                        <h3 class="section-subtitle">بيانات تمﻸ بواسطة القائم باألعمال (مهندس الصيانه /
+                                            المقاول إن
+                                            وﺟد)</h3>
+
+                                        <!-- PPE Table -->
+                                        <table class="checklist-table" formGroupName="ppe">
+                                            <thead>
+                                                <tr>
+                                                    <th>م</th>
+                                                    <th>البند</th>
+                                                    <th>مطلوب</th>
+                                                    <th>غير مطلوب</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr formGroupName="helmet">
+                                                    <td>1</td>
+                                                    <td>خوذة وحذاء واقي</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="mask">
+                                                    <td>2</td>
+                                                    <td>قناع واقي ضد الغازات واألتربه</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="gloves">
+                                                    <td>3</td>
+                                                    <td>قفازات واقية</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="goggles">
+                                                    <td>4</td>
+                                                    <td>نظارات واقية</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="harness">
+                                                    <td>5</td>
+                                                    <td>حﺰام أمان واقي لالرتفاع</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="faceShield">
+                                                    <td>6</td>
+                                                    <td>واقي وﺟه للحرارة / نظارة واقيه</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="earPlugs">
+                                                    <td>7</td>
+                                                    <td>سدادة أذن</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="other">
+                                                    <td>8</td>
+                                                    <td>أدوات أمان أخرى</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="full-field">
+                                            <label>2- متطلبات تﺄمين العمل</label>
+                                            <div class="security-requirements-list"
+                                                formArrayName="securityRequirements">
+                                                <div class="security-item"
+                                                    *ngFor="let requirement of securityRequirements.controls; let i = index">
+                                                    <span class="requirement-number">{{i + 1}}-</span>
+                                                    <input type="text" class="field-input security-input"
+                                                        [formControlName]="i" placeholder="أدخل متطلب الأمان">
+                                                    <button type="button" class="btn-remove"
+                                                        (click)="removeSecurityRequirement(i)"
+                                                        *ngIf="securityRequirements.length > 1" title="حذف">
+                                                        <span>×</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn-add-requirement"
+                                                (click)="addSecurityRequirement()"
+                                                *ngIf="securityRequirements.length < 8">
+                                                <span>+ إضافة متطلب جديد لتأمين العمل </span>
+                                            </button>
+                                            <p class="limit-message" *ngIf="securityRequirements.length >= 8">
+                                                <span>تم الوصول للحد الأقصى (8 متطلبات أمان)</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="full-field">
+                                            <label>3- هل محتمل حدوث حرائق؟ <span class="required-mark">*</span></label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" formControlName="fireRisk" value="نعم">
+                                                    <span>نعم</span>
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" formControlName="fireRisk" value="لا">
+                                                    <span>لا</span>
+                                                </label>
+                                            </div>
+                                            <div class="error-message" *ngIf="isFieldInvalid('safetyRequirements.fireRisk')">
+                                                {{ getFieldError('safetyRequirements.fireRisk') }}
+                                            </div>
+                                            <p class="note"
+                                                *ngIf="permitForm.get('safetyRequirements.fireRisk')?.value === 'نعم'">
+                                                في حالة وﺟود احتمال لحدوث حريق يجﺐ توفير أحد وسائل مكافحة الحريق اﻵتية:
+                                            </p>
+                                        </div>
+
+                                        <!-- Fire Safety Table - Only shown when fireRisk is نعم -->
+                                        <table class="checklist-table" formGroupName="fireSafety"
+                                            *ngIf="permitForm.get('safetyRequirements.fireRisk')?.value === 'نعم'">
+                                            <thead>
+                                                <tr>
+                                                    <th>البند</th>
+                                                    <th>مطلوب</th>
+                                                    <th>غير مطلوب</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr formGroupName="extinguisher">
+                                                    <td>وﺟود ﻃفاية حريق مناسبة</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="waterSand">
+                                                    <td>مياﻩ / رمال</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="ventilation">
+                                                    <td>عمل تهوية كافية</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="fireman">
+                                                    <td>فرد إطفاء</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                                <tr formGroupName="other">
+                                                    <td>أي وسيلة إﻃفاء أخرى</td>
+                                                    <td><input type="checkbox" formControlName="required"></td>
+                                                    <td><input type="checkbox" formControlName="notRequired"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <!-- Instructions -->
+                                    <section class="instructions">
+                                        <ul>
+                                            <li>هذا التصريح ال يغني عن إﺟراءات تنسيق بدأ األعمال التى تتم بالتنسيق مع
+                                                اإلدارات
+                                                المعنيه في
+                                                حال المقاولين الخارﺬﻴين.</li>
+                                            <li>هذا التصريح يعتبر صالح لالستخدام إذا كانت ظروف العمل أثناء إصدار هذا
+                                                التصريح لم
+                                                تتغير وما
+                                                زالت آمنة.</li>
+                                            <li>أي تغيير بطبيعة العمل تؤدي إلى حدوث ظروف غير آمنة مثل :،تسرب مياﻩ ، تلفف
+                                                بالمعفدات
+                                                بطريقفه
+                                                غيفر آمنفه يجفﺐ إيقفاف العمفل بهفذا التصفريح وإبفال المسفئول لبحف
+                                                الحالفة وإصدار
+                                                تصريح آخر.
+                                            </li>
+                                            <li>يتم عمل التصريح من أصل و ٣ صور – يتم حفﻆ صورة مع مسئول المكان (اإلدارة
+                                                المشرفه)
+                                                وصورة مع
+                                                مسئول السالمه والصحه المهنيه و أصل وصورة مع ﻃالﺐ التصريح (القائم
+                                                بالعمل).</li>
+                                            <li>يقوم ﻃالﺐ التصريح بﺈرﺟاع أصل التصريح إلى مسئول السالمه والصحه المهنيه
+                                                بعد االنتهاء
+                                                من
+                                                األعمال و خلو المكان من المخلفات.</li>
+                                            <li>مسئول السالمه والصحه المهنيه يقوم بالمتابعة والتوقيع في حاالت األعمال
+                                                الغير روتينيه.
+                                            </li>
+                                        </ul>
+                                    </section>
+
+                                    <!-- Signatures Section -->
+                                    <section class="signatures-section" formGroupName="signatures">
+                                        <div class="signature-grid">
+                                            <div class="signature-item">
+                                                <label>المهندس / المشرف</label>
+                                                <input type="text" class="signature-line" formControlName="engineer">
+                                            </div>
+                                            <div class="signature-item">
+                                                <label>توقيع مسئول المقاول (إن وﺟد)</label>
+                                                <input type="text" class="signature-line" formControlName="contractor">
+                                            </div>
+                                        </div>
+                                        <div class="signature-grid">
+                                            <div class="signature-item">
+                                                <label>رقم التليفون<span class="required-mark">*</span></label>
+                                                <input type="text" class="signature-line" formControlName="phone">
+                                                <div class="error-message" *ngIf="isFieldInvalid('signatures.phone')">
+                                                    {{ getFieldError('signatures.phone') }}
+                                                </div>
+                                            </div>
+                                            <div class="signature-item">
+                                                <label>التوقيع<span class="required-mark">*</span></label>
+                                                <input type="text" class="signature-line" formControlName="signature">
+                                                <div class="error-message" *ngIf="isFieldInvalid('signatures.signature')">
+                                                    {{ getFieldError('signatures.signature') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="signature-item full">
+                                            <label>مسئول السالمه والصحه المهنيه</label>
+                                            <input type="text" class="signature-line" formControlName="safetyOfficer">
+                                        </div>
+                                    </section>
+
+                                    <!-- Document Footer -->
+                                    <footer class="document-footer">
+                                        <div class="footer-left">
+                                            <p>ISSUE NO: 05</p>
+                                            <p>HF-01-05/HRG</p>
+                                        </div>
+                                        <div class="footer-right">
+                                            <p>ISSUE DATE: 01-2-2023</p>
+                                        </div>
+                                    </footer>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Actions Bar -->
+                        <div class="actions-bar">
+                             <button 
+                                *ngIf="editMode !== 'readonly'" 
+                                type="button" 
+                                class="action-btn btn-save"
+                                (click)="onSubmit()"
+                                [disabled]="isSubmitting">
+                                
+                                <!-- Show spinner when submitting -->
+                                <app-loading-spinner 
+                                *ngIf="isSubmitting"
+                                size="small"
+                                color="white"
+                                messagePosition="inline">
+                                </app-loading-spinner>
+                                
+                                <!-- Show text when not submitting -->
+                                <span *ngIf="!isSubmitting">
+                                {{ permitId ? 'حفظ التعديلات' : 'حفظ التصريح' }}
+                                </span>
+                                <span *ngIf="isSubmitting">
+                                جاري الحفظ...
+                                </span>
+                            </button>
+                            
+                            <button 
+                                *ngIf="editMode === 'readonly'" 
+                                type="button" 
+                                class="action-btn btn-back"
+                                (click)="router.navigate(['/work-permits'])">
+                                <span>رجوع للقائمة</span>
+                            </button>
+                        </div>
+                    </div>

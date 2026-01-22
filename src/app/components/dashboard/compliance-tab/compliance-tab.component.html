@@ -1,0 +1,127 @@
+<div class="tab-panel">
+
+    <div *ngIf="data?.compliance as compliance">
+
+        <!-- Compliance Summary Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-box">
+                <div class="metric-label">معدل استخدام معدات الوقاية</div>
+                <div class="metric-value">{{ compliance.ppeCompliancePercentage | number:'1.0-0' }}<span
+                        class="unit">%</span></div>
+                <div class="metric-change">من {{ compliance.totalPermits }} تصريح</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">تصاريح مع معدات الوقاية</div>
+                <div class="metric-value">{{ compliance.permitsWithPPE }}</div>
+                <div class="metric-change positive">من أصل {{ compliance.totalPermits }}</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">نسبة الأعمال الساخنة</div>
+                <div class="metric-value">{{ compliance.hotWorkStats.hotWorkPercentage | number:'1.1-1' }}<span
+                        class="unit">%</span></div>
+                <div class="metric-change">{{ compliance.hotWorkStats.totalHotWorkPermits }} تصريح</div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">الأماكن المغلقة</div>
+                <div class="metric-value">{{ compliance.permitsInConfinedSpaces }}</div>
+                <div class="metric-change">تصريح</div>
+            </div>
+        </div>
+
+        <!-- Safety Equipment Usage Table -->
+        <div class="data-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">استخدام معدات السلامة</h3>
+            </div>
+            <div class="panel-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المعدات</th>
+                            <th class="text-left">العدد</th>
+                            <th class="text-left">النسبة</th>
+                            <th>التوزيع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of compliance.safetyEquipmentUsage | keyvalue">
+                            <td>{{ translateEquipmentName(item.key) }}</td>
+                            <td class="text-left">{{ item.value }}</td>
+                            <td class="text-left">{{ getPercentage(item.value, compliance.totalPermits) }}%</td>
+                            <td>
+                                <div class="bar-chart">
+                                    <div class="bar-fill primary"
+                                        [style.width.%]="getPercentage(item.value, compliance.totalPermits)"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hot Work Stats -->
+        <div class="data-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">إحصائيات الأعمال الساخنة</h3>
+            </div>
+            <div class="panel-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>النوع</th>
+                            <th class="text-left">العدد</th>
+                            <th class="text-left">النسبة من الأعمال الساخنة</th>
+                            <th>التوزيع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>لحام</td>
+                            <td class="text-left">{{ compliance.hotWorkStats.weldingPermits }}</td>
+                            <td class="text-left">{{ getPercentage(compliance.hotWorkStats.weldingPermits,
+                                compliance.hotWorkStats.totalHotWorkPermits) }}%</td>
+                            <td>
+                                <div class="bar-chart">
+                                    <div class="bar-fill warning"
+                                        [style.width.%]="getPercentage(compliance.hotWorkStats.weldingPermits, compliance.hotWorkStats.totalHotWorkPermits)">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>قطع</td>
+                            <td class="text-left">{{ compliance.hotWorkStats.cuttingPermits }}</td>
+                            <td class="text-left">{{ getPercentage(compliance.hotWorkStats.cuttingPermits,
+                                compliance.hotWorkStats.totalHotWorkPermits) }}%</td>
+                            <td>
+                                <div class="bar-chart">
+                                    <div class="bar-fill warning"
+                                        [style.width.%]="getPercentage(compliance.hotWorkStats.cuttingPermits, compliance.hotWorkStats.totalHotWorkPermits)">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>أخرى</td>
+                            <td class="text-left">{{ compliance.hotWorkStats.otherHotWorkPermits }}</td>
+                            <td class="text-left">{{ getPercentage(compliance.hotWorkStats.otherHotWorkPermits,
+                                compliance.hotWorkStats.totalHotWorkPermits) }}%</td>
+                            <td>
+                                <div class="bar-chart">
+                                    <div class="bar-fill warning"
+                                        [style.width.%]="getPercentage(compliance.hotWorkStats.otherHotWorkPermits, compliance.hotWorkStats.totalHotWorkPermits)">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

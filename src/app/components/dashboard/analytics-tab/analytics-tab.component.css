@@ -1,0 +1,142 @@
+/* ===================================
+   ANALYTICS TAB - Specific Styles
+   =================================== */
+
+.tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Data Panels */
+.data-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.3s;
+}
+
+.data-panel:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.panel-header {
+    padding: 20px 28px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, #fafbfc, #ffffff);
+}
+
+.panel-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+.panel-body {
+    padding: 0;
+}
+
+/* Tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table thead {
+    background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+}
+
+.data-table th {
+    padding: 16px 28px;
+    text-align: right;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.data-table td {
+    padding: 18px 28px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.data-table tbody tr {
+    transition: all 0.15s;
+}
+
+.data-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.font-medium {
+    font-weight: 600;
+}
+
+.mono {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 13px;
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+/* Bar Charts */
+.bar-chart {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.bar-fill.primary {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* Grid Layout */
+.grid-2col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 28px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .grid-2col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .data-table th,
+    .data-table td {
+        padding: 14px 20px;
+    }
+}

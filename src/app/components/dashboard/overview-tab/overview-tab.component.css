@@ -1,0 +1,400 @@
+/* ===================================
+   OVERVIEW TAB - Specific Styles
+   =================================== */
+
+/* Tab Panel Container */
+.tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.metric-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.metric-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.metric-box:nth-child(2)::before {
+    background: linear-gradient(90deg, #06b6d4, #3b82f6);
+}
+
+.metric-box:nth-child(3)::before {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
+.metric-box:nth-child(4)::before {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.metric-box:nth-child(5)::before {
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.metric-box:nth-child(6)::before {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.metric-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    border-color: #3b82f6;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.metric-value .unit {
+    font-size: 18px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-right: 4px;
+}
+
+.metric-change {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.metric-change.positive {
+    color: #10b981;
+}
+
+.metric-change.negative {
+    color: #ef4444;
+}
+
+.metric-change.warning {
+    color: #f59e0b;
+}
+
+/* Data Panels */
+.data-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.3s;
+}
+
+.data-panel:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.panel-header {
+    padding: 20px 28px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, #fafbfc, #ffffff);
+}
+
+.panel-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+.badge-alert {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.panel-body {
+    padding: 0;
+}
+
+/* Tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table thead {
+    background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+}
+
+.data-table th {
+    padding: 16px 28px;
+    text-align: right;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.data-table td {
+    padding: 18px 28px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.data-table tbody tr {
+    transition: all 0.15s;
+}
+
+.data-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.font-medium {
+    font-weight: 600;
+}
+
+.mono {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 13px;
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+/* Status Indicators */
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.status-dot.pending {
+    background: #f59e0b;
+}
+
+.status-dot.approved {
+    background: #10b981;
+}
+
+.status-dot.in-progress {
+    background: #3b82f6;
+    animation: pulse-dot 2s infinite;
+}
+
+.status-dot.completed {
+    background: #8b5cf6;
+}
+
+.status-dot.rejected {
+    background: #ef4444;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.status-pending {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.status-badge.status-approved {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.status-badge.status-in-progress {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border: 1px solid #3b82f6;
+}
+
+.status-badge.status-completed {
+    background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
+    color: #6b21a8;
+    border: 1px solid #8b5cf6;
+}
+
+.status-badge.status-rejected,
+.status-badge.status-cancelled {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.priority-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.priority-badge.high {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.priority-badge.medium {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #f59e0b;
+}
+
+.priority-badge.low {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+/* Bar Charts */
+.bar-chart {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.bar-fill.pending {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.bar-fill.approved {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.bar-fill.in-progress {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.bar-fill.completed {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.bar-fill.rejected {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-link:hover {
+    color: #2563eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .metric-value {
+        font-size: 28px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 14px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-value {
+        font-size: 24px;
+    }
+}

@@ -1,0 +1,8 @@
+/* Sidebar on the right for RTL Arabic layout */
+app-sidebar {
+  order: 2; /* Ensure sidebar is on the right */
+}
+
+main {
+  order: 1; /* Ensure main content is on the left */
+}

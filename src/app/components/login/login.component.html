@@ -1,0 +1,40 @@
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <img src="assets/logo.png" alt="Hurghada Airport Logo" class="logo">
+            <h1>مطار الغردقة الدولي</h1>
+            <p>نظام تصاريح العمل الإلكتروني</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" formControlName="username" class="form-control"
+                    placeholder="أدخل اسم المستخدم">
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" formControlName="password" class="form-control"
+                    placeholder="أدخل كلمة المرور">
+            </div>
+
+            <div *ngIf="error" class="error-message">
+                {{ error }}
+            </div>
+
+            <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn-login">
+                <span *ngIf="!isLoading">تسجيل الدخول</span>
+                <span *ngIf="isLoading">جاري التحميل...</span>
+            </button>
+            <div style="text-align: center; margin-top: 10px;">
+                <a routerLink="/register" style="color: #007bff; text-decoration: none;">إنشاء حساب جديد</a>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            <p>الإدارة العامة للمطابقة والسلامة</p>
+            <p>إدارة السلامة والصحة المهنية</p>
+        </div>
+    </div>
+</div>

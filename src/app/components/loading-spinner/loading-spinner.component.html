@@ -1,0 +1,13 @@
+<!-- Overlay Mode - Full screen/container overlay -->
+<div *ngIf="mode === 'overlay'" class="spinner-overlay">
+  <div class="spinner-content">
+    <div class="spinner" [ngClass]="[getSizeClass(), getColorClass()]"></div>
+    <p *ngIf="message" class="spinner-message">{{ message }}</p>
+  </div>
+</div>
+
+<!-- Inline Mode - Embedded in content -->
+<div *ngIf="mode === 'inline'" class="spinner-inline" [ngClass]="messagePosition === 'inline' ? 'spinner-row' : 'spinner-column'">
+  <div class="spinner" [ngClass]="[getSizeClass(), getColorClass()]"></div>
+  <p *ngIf="message" class="spinner-message">{{ message }}</p>
+</div>

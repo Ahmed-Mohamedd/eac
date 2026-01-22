@@ -1,0 +1,93 @@
+<div class="tab-panel">
+
+    <!-- Department Statistics Table -->
+    <div class="data-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">أداء الأقسام</h3>
+        </div>
+        <div class="panel-body">
+            <table class="data-table" *ngIf="data?.departmentStats as deptStats">
+                <thead>
+                    <tr>
+                        <th>القسم</th>
+                        <th class="text-left">إجمالي التصاريح</th>
+                        <th class="text-left">نشط</th>
+                        <th class="text-left">مكتمل</th>
+                        <th class="text-left">متوسط الوقت (ساعة)</th>
+                        <th class="text-left">النسبة من الإجمالي</th>
+                        <th>التوزيع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let dept of deptStats">
+                        <td class="font-medium">{{ dept.departmentName }}</td>
+                        <td class="text-left">{{ dept.totalPermits }}</td>
+                        <td class="text-left">{{ dept.activePermits }}</td>
+                        <td class="text-left">{{ dept.completedPermits }}</td>
+                        <td class="text-left">{{ dept.avgCompletionTimeHours | number:'1.0-0' }}</td>
+                        <td class="text-left">{{ dept.percentage | number:'1.1-1' }}%</td>
+                        <td>
+                            <div class="bar-chart">
+                                <div class="bar-fill primary" [style.width.%]="dept.percentage"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Statistics -->
+    <div class="grid-2col" *ngIf="data?.topStats as topStats">
+
+        <div class="data-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">أكثر الأقسام نشاطاً</h3>
+            </div>
+            <div class="panel-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="text-left">#</th>
+                            <th>القسم</th>
+                            <th class="text-left">العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of topStats.topDepartments; let i = index">
+                            <td class="text-left mono">{{ i + 1 }}</td>
+                            <td>{{ item.name }}</td>
+                            <td class="text-left font-medium">{{ item.count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="data-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">أكثر المواقع استخداماً</h3>
+            </div>
+            <div class="panel-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="text-left">#</th>
+                            <th>الموقع</th>
+                            <th class="text-left">العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of topStats.topLocations; let i = index">
+                            <td class="text-left mono">{{ i + 1 }}</td>
+                            <td>{{ item.name }}</td>
+                            <td class="text-left font-medium">{{ item.count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

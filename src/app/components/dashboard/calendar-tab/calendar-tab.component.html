@@ -1,0 +1,100 @@
+<div class="tab-panel">
+
+    <!-- Header with View Toggle -->
+    <div class="calendar-header">
+        <div class="month-navigation">
+            <button class="btn-nav" (click)="previousMonth()" [disabled]="isLoading">‹</button>
+            <h2 class="month-title">{{ getCurrentMonthName() }}</h2>
+            <button class="btn-nav" (click)="nextMonth()" [disabled]="isLoading">›</button>
+        </div>
+
+        <button class="btn-toggle" (click)="toggleView()">
+            <span *ngIf="viewMode === 'calendar'">عرض القائمة</span>
+            <span *ngIf="viewMode === 'timeline'">عرض التقويم</span>
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner"></div>
+        <span>جاري تحميل البيانات...</span>
+    </div>
+
+    <!-- Calendar Grid View -->
+    <div *ngIf="viewMode === 'calendar'" class="calendar-view">
+
+        <!-- Week Days Header -->
+        <div class="calendar-grid">
+            <div *ngFor="let day of weekDays" class="week-day-header">
+                {{ day }}
+            </div>
+        </div>
+
+        <!-- Calendar Days -->
+        <div class="calendar-grid">
+            <div *ngFor="let day of calendarDays" class="calendar-day" [class.other-month]="!day.isCurrentMonth">
+
+                <div class="day-number">{{ day.date.getDate() }}</div>
+
+                <div class="day-permits">
+                    <div *ngFor="let permit of day.permits" class="permit-card"
+                        [style.border-left-color]="permit.statusColor"
+                        [style.grid-column]="'span ' + getPermitSpan(permit, day)"
+                        [hidden]="!shouldShowPermit(permit, day)" (click)="viewPermit(permit.id)">
+
+                        <div class="permit-title">{{ permit.title }}</div>
+                        <div class="permit-meta">
+                            <span class="permit-dept">{{ permit.departmentName }}</span>
+                            <span *ngIf="permit.isHotWork" class="hot-work-badge">🔥 عمل ساخن</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline/List View -->
+    <div *ngIf="viewMode === 'timeline'" class="timeline-view">
+
+        <div *ngIf="getTimelineGroups().length === 0" class="empty-state">
+            <p>لا توجد تصاريح محددة لهذا الشهر</p>
+        </div>
+
+        <div *ngFor="let group of getTimelineGroups()" class="timeline-group">
+            <div class="timeline-date">
+                {{ formatDate(group.date) }}
+            </div>
+
+            <div class="timeline-permits">
+                <div *ngFor="let permit of group.permits" class="timeline-permit-card"
+                    [style.border-right-color]="permit.statusColor" (click)="viewPermit(permit.id)">
+
+                    <div class="timeline-permit-header">
+                        <h3 class="timeline-permit-title">{{ permit.title }}</h3>
+                        <span *ngIf="permit.isHotWork" class="hot-work-badge">🔥 عمل ساخن</span>
+                    </div>
+
+                    <div class="timeline-permit-details">
+                        <div class="detail-row">
+                            <span class="label">القسم:</span>
+                            <span class="value">{{ permit.departmentName }}</span>
+                        </div>
+
+                        <div class="detail-row" *ngIf="permit.workLocation">
+                            <span class="label">الموقع:</span>
+                            <span class="value">{{ permit.workLocation }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">المدة:</span>
+                            <span class="value">
+                                {{ permit.startDate | date:'dd/MM/yyyy' }} - {{ permit.endDate | date:'dd/MM/yyyy' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

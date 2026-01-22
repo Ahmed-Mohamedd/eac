@@ -1,0 +1,237 @@
+<div class="tab-panel">
+
+  <!-- KPI Metrics Grid -->
+  <div class="metrics-grid">
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">إجمالي التصاريح</div>
+      <div class="metric-value">{{ stats.totalPermits }}</div>
+      <div class="metric-change positive">+12% من الشهر السابق</div>
+    </div>
+
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">قيد التنفيذ</div>
+      <div class="metric-value">{{ stats.activePermits }}</div>
+      <div class="metric-change">{{ getPercentage(stats.activePermits, stats.totalPermits) }}% من الإجمالي
+      </div>
+    </div>
+
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">بانتظار الموافقة</div>
+      <div class="metric-value">{{ stats.pendingApprovals }}</div>
+      <div class="metric-change warning" *ngIf="stats.pendingApprovals > 0">يحتاج إجراء</div>
+    </div>
+
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">متأخرة</div>
+      <div class="metric-value">{{ stats.overduePermits }}</div>
+      <div class="metric-change negative" *ngIf="stats.overduePermits > 0">تتطلب اهتمام</div>
+    </div>
+
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">مكتملة (هذا الشهر)</div>
+      <div class="metric-value">{{ stats.completedThisMonth }}</div>
+      <div class="metric-change">من أصل {{ stats.totalPermits }}</div>
+    </div>
+
+    <div class="metric-box" *ngIf="data?.statistics as stats">
+      <div class="metric-label">متوسط وقت المعالجة</div>
+      <div class="metric-value">{{ stats.averageProcessingTimeHours | number:'1.0-0' }}<span class="unit">ساعة</span>
+      </div>
+      <div class="metric-change">-8% تحسن</div>
+    </div>
+  </div>
+
+  <!-- Status Distribution Table -->
+  <div class="data-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">توزيع التصاريح حسب الحالة</h3>
+    </div>
+    <div class="panel-body">
+      <table class="data-table" *ngIf="data?.statistics as stats">
+        <thead>
+          <tr>
+            <th>الحالة</th>
+            <th class="text-left">العدد</th>
+            <th class="text-left">النسبة</th>
+            <th>التوزيع</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status-dot pending"></span> قيد الانتظار</td>
+            <td class="text-left">{{ stats.permitsByStatus.pending }}</td>
+            <td class="text-left">{{ getPercentage(stats.permitsByStatus.pending, stats.totalPermits) }}%
+            </td>
+            <td>
+              <div class="bar-chart">
+                <div class="bar-fill pending"
+                  [style.width.%]="getPercentage(stats.permitsByStatus.pending, stats.totalPermits)">
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="status-dot approved"></span> موافق عليه</td>
+            <td class="text-left">{{ stats.permitsByStatus.approved }}</td>
+            <td class="text-left">{{ getPercentage(stats.permitsByStatus.approved, stats.totalPermits) }}%
+            </td>
+            <td>
+              <div class="bar-chart">
+                <div class="bar-fill approved"
+                  [style.width.%]="getPercentage(stats.permitsByStatus.approved, stats.totalPermits)">
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="status-dot in-progress"></span> قيد التنفيذ</td>
+            <td class="text-left">{{ stats.permitsByStatus.inProgress }}</td>
+            <td class="text-left">{{ getPercentage(stats.permitsByStatus.inProgress, stats.totalPermits)
+              }}%</td>
+            <td>
+              <div class="bar-chart">
+                <div class="bar-fill in-progress"
+                  [style.width.%]="getPercentage(stats.permitsByStatus.inProgress, stats.totalPermits)">
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="status-dot completed"></span> مكتمل</td>
+            <td class="text-left">{{ stats.permitsByStatus.completed }}</td>
+            <td class="text-left">{{ getPercentage(stats.permitsByStatus.completed, stats.totalPermits)
+              }}%</td>
+            <td>
+              <div class="bar-chart">
+                <div class="bar-fill completed"
+                  [style.width.%]="getPercentage(stats.permitsByStatus.completed, stats.totalPermits)">
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="status-dot rejected"></span> مرفوض</td>
+            <td class="text-left">{{ stats.permitsByStatus.rejected }}</td>
+            <td class="text-left">{{ getPercentage(stats.permitsByStatus.rejected, stats.totalPermits) }}%
+            </td>
+            <td>
+              <div class="bar-chart">
+                <div class="bar-fill rejected"
+                  [style.width.%]="getPercentage(stats.permitsByStatus.rejected, stats.totalPermits)">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Alerts Tables -->
+  <div class="data-panel" *ngIf="data?.alerts as alerts">
+    <div *ngIf="alerts.overduePermits?.length || alerts.pendingApprovals?.length">
+      <div class="panel-header">
+        <h3 class="panel-title">التنبيهات الهامة</h3>
+        <span class="badge-alert">{{ alerts.totalAlerts }}</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Overdue Permits -->
+        <div *ngIf="alerts.overduePermits as overduePermits">
+          <div *ngIf="overduePermits.length > 0">
+            <h4 style="padding: 12px 20px; margin: 0; font-size: 14px; font-weight: 600; background: #fff3cd;">تصاريح
+              متأخرة ({{ overduePermits.length }})</h4>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>الوصف</th>
+                  <th>النوع</th>
+                  <th>الخطورة</th>
+                  <th class="text-left">أيام التأخير</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let alert of overduePermits.slice(0, 5)" (click)="viewPermit(alert.permitId)"
+                  class="clickable-row">
+                  <td>{{ truncate(alert.workDescription, 40) }}</td>
+                  <td>{{ alert.alertType }}</td>
+                  <td><span class="priority-badge" [ngClass]="alert.severity.toLowerCase()">{{ alert.severity }}</span>
+                  </td>
+                  <td class="text-left mono">{{ alert.daysOverdue }}</td>
+                  <td class="text-left">
+                    <button class="btn-link">عرض</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div *ngIf="alerts.pendingApprovals as pendingApprovals">
+          <div *ngIf="pendingApprovals.length > 0" style="margin-top: 16px;">
+            <h4 style="padding: 12px 20px; margin: 0; font-size: 14px; font-weight: 600; background: #cfe2ff;">بانتظار
+              الموافقة ({{ pendingApprovals.length }})</h4>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>الوصف</th>
+                  <th>النوع</th>
+                  <th>الخطورة</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let alert of pendingApprovals.slice(0, 5)" (click)="viewPermit(alert.permitId)"
+                  class="clickable-row">
+                  <td>{{ truncate(alert.workDescription, 40) }}</td>
+                  <td>{{ alert.alertType }}</td>
+                  <td><span class="priority-badge" [ngClass]="alert.severity.toLowerCase()">{{ alert.severity }}</span>
+                  </td>
+                  <td class="text-left">
+                    <button class="btn-link">عرض</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Table -->
+  <div class="data-panel" *ngIf="data?.recentActivity as activity">
+    <div class="panel-header">
+      <h3 class="panel-title">النشاطات الأخيرة</h3>
+      <button class="btn-link" (click)="viewAllPermits()">عرض الكل</button>
+    </div>
+    <div class="panel-body">
+      <table class="data-table" *ngIf="activity.recentPermits as permits">
+        <thead>
+          <tr>
+            <th>رقم التصريح</th>
+            <th>الوصف</th>
+            <th>القسم</th>
+            <th>المنشئ</th>
+            <th>الحالة</th>
+            <th>التاريخ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let permit of permits.slice(0, 10)" (click)="viewPermit(permit.id)" class="clickable-row">
+            <td class="mono text-left">#{{ permit.id }}</td>
+            <td>{{ truncate(permit.workDescription, 40) }}</td>
+            <td>{{ permit.departmentName }}</td>
+            <td>{{ permit.createdByName }}</td>
+            <td><span class="status-badge" [ngClass]="getStatusClass(permit.status)">{{ permit.status }}</span></td>
+            <td class="text-left">{{ formatDate(permit.createdAt) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

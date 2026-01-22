@@ -1,0 +1,317 @@
+<div class="permit-detail-container" *ngIf="!isLoading && permit">
+
+    <!-- Header Section -->
+    <header class="header-section">
+        <div class="header-left">
+            <button class="btn-back" (click)="goBack()" title="رجوع">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <div class="title-group">
+                <h1>تصريح عمل #{{ permit.id }}</h1>
+                <span class="subtitle">{{ permit.departmentName }} • {{ permit.isRoutineWork ? 'عمل روتيني' : 'عمل غير
+                    روتيني' }}</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn-action btn-export" (click)="exportToWord()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                </svg>
+                تصدير Word
+            </button>
+            <button class="btn-action btn-edit" (click)="editPermit()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 02 2h14a2 2 0 0 02-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                تعديل التصريح
+            </button>
+        </div>
+    </header>
+
+    <div class="detail-grid">
+
+        <!-- Sidebar (Right Column) -->
+        <aside class="sidebar">
+
+            <!-- Status Card -->
+            <div class="card status-card">
+                <div class="card-body">
+                    <span class="status-badge" [ngClass]="getStatusClass(permit.workPermitStatusName)">
+                        {{ permit.workPermitStatusName }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Overview Card -->
+            <div class="card">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4M12 8h.01" />
+                    </svg>
+                    <h2>نظرة عامة</h2>
+                </div>
+                <div class="card-body">
+                    <div class="info-list">
+                        <div class="info-row">
+                            <label>القسم المسؤول</label>
+                            <span>{{ permit.departmentName }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>المهندس المشرف</label>
+                            <span>{{ permit.supervisorEng }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>رقم الهاتف</label>
+                            <span>{{ permit.phoneNumber || 'غير مسجل' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>نوع العمل</label>
+                            <span>{{ permit.isRoutineWork ? 'روتيني' : 'غير روتيني' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timings Card -->
+            <div class="card">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <h2>الجدول الزمني</h2>
+                </div>
+                <div class="card-body">
+                    <div class="timing-item">
+                        <div class="timing-icon">📅</div>
+                        <div class="timing-info">
+                            <label>تاريخ البدء</label>
+                            <span>{{ permit.startWorkDate }}</span>
+                        </div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-icon">⏰</div>
+                        <div class="timing-info">
+                            <label>وقت البدء</label>
+                            <span>{{ permit.startWorkHour }}</span>
+                        </div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-icon">🏁</div>
+                        <div class="timing-info">
+                            <label>تاريخ الانتهاء</label>
+                            <span>{{ permit.endWorkDate }}</span>
+                        </div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-icon">⌛</div>
+                        <div class="timing-info">
+                            <label>وقت الانتهاء</label>
+                            <span>{{ permit.endWorkHour }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Card -->
+            <div class="card">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <h2>سجل التتبع</h2>
+                </div>
+                <div class="card-body">
+                    <div class="audit-timeline">
+                        <div class="audit-step">
+                            <div class="audit-dot"></div>
+                            <div class="audit-content">
+                                <strong>تم إنشاء التصريح</strong>
+                                <span class="user">{{ permit.createdByFullName }}</span>
+                                <span class="date">{{ permit.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </div>
+                        </div>
+                        <div class="audit-step" *ngIf="permit.updatedAt">
+                            <div class="audit-dot"></div>
+                            <div class="audit-content">
+                                <strong>آخر تحديث</strong>
+                                <span class="user">{{ permit.updatedByFullName }}</span>
+                                <span class="date">{{ permit.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Left Column) -->
+        <main class="main-content">
+
+            <!-- Work Description -->
+            <div class="card">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 02 2h12a2 2 0 0 02-2V8z" />
+                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                    </svg>
+                    <h2>تفاصيل العمل والأدوات</h2>
+                </div>
+                <div class="card-body">
+                    <div class="description-box">
+                        {{ permit.workDescription }}
+                    </div>
+                    <div class="info-list" style="margin-top: 20px;">
+                        <div class="info-row" *ngIf="permit.usedTools">
+                            <label>الأدوات والمعدات المستخدمة</label>
+                            <span>{{ permit.usedTools }}</span>
+                        </div>
+                        <div class="info-row" *ngIf="permit.workLocation">
+                            <label>الموقع التفصيلي</label>
+                            <span>{{ permit.workLocation }}</span>
+                        </div>
+                        <div class="info-row" *ngIf="permit.highestExpectedRise">
+                            <label>أعلى ارتفاع متوقع للعمل عليه</label>
+                            <span>{{ permit.highestExpectedRise }} متر</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locations -->
+            <div class="card" *ngIf="permit.workLocationIds?.length">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <h2>نطاق العمل (المواقع)</h2>
+                </div>
+                <div class="card-body">
+                    <div class="badges-grid">
+                        <div class="feature-badge" *ngFor="let locId of permit.workLocationIds">
+                            <i>📍</i>
+                            <span>{{ getLocationName(locId) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workers -->
+            <div class="card" *ngIf="permit.workers?.length">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <h2>فريق العمل (العمال)</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم العامل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let worker of permit.workers; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ worker.workerName }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Requirements -->
+            <div class="card" *ngIf="permit.securityRequirements?.length">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <h2>متطلبات السلامة العامة</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="req-list">
+                        <li class="req-item" *ngFor="let req of permit.securityRequirements">
+                            <span>{{ req }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PPE & Fire Safety -->
+            <div class="card" *ngIf="hasAnyPPE() || hasFireFightingEquipment() || permit.fireRisk === 'نعم'">
+                <div class="card-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    <h2>مهمات الوقاية ومكافحة الحريق</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Hot Work / Fire Risk Section -->
+                    <div class="info-list"
+                        style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--slate-100);">
+                        <div class="info-row">
+                            <label>الأعمال الساخنة / احتمالية حدوث حريق</label>
+                            <span [style.color]="permit.fireRisk === 'نعم' ? 'var(--danger)' : 'var(--success)'">
+                                {{ permit.fireRisk === 'نعم' ? 'نعم - محتمل حدوث حريق' : 'لا يوجد خطر حريق' }}
+                            </span>
+                        </div>
+                        <div class="badges-grid" style="margin-top: 10px;"
+                            *ngIf="permit.welding || permit.cutting || permit.otherHotWork">
+                            <div class="feature-badge" *ngIf="permit.welding"><i>🔥</i><span>لحام</span></div>
+                            <div class="feature-badge" *ngIf="permit.cutting"><i>✂️</i><span>قطع</span></div>
+                            <div class="feature-badge" *ngIf="permit.otherHotWork"><i>🛠️</i><span>{{
+                                    permit.otherHotWork }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="badges-grid">
+                        <!-- PPE -->
+                        <div class="feature-badge" *ngIf="permit.helmetAndShoes"><i>👷</i><span>خوذة وحذاء وقاية</span>
+                        </div>
+                        <div class="feature-badge" *ngIf="permit.gasDustMask"><i>😷</i><span>قناع غازات وأتربة</span>
+                        </div>
+                        <div class="feature-badge" *ngIf="permit.gloves"><i>🧤</i><span>قفازات واقية</span></div>
+                        <div class="feature-badge" *ngIf="permit.goggles"><i>🥽</i><span>نظارات واقية</span></div>
+                        <div class="feature-badge" *ngIf="permit.harness"><i>🪢</i><span>حزام أمان للارتفاعات</span>
+                        </div>
+                        <div class="feature-badge" *ngIf="permit.faceShield"><i>🛡️</i><span>واقي وجه حراري</span></div>
+                        <div class="feature-badge" *ngIf="permit.earPlugs"><i>👂</i><span>سدادة أذن</span></div>
+
+                        <!-- Fire -->
+                        <div class="feature-badge" *ngIf="permit.fireExtinguisherRequired"><i>🧯</i><span>طفاية حريق
+                                مناسبة</span></div>
+                        <div class="feature-badge" *ngIf="permit.waterSandRequired"><i>💧</i><span>مياه / رمال</span>
+                        </div>
+                        <div class="feature-badge" *ngIf="permit.adequateVentilationRequired"><i>🌬️</i><span>تهوية
+                                كافية</span></div>
+                        <div class="feature-badge" *ngIf="permit.firefighterRequired"><i>👨‍🚒</i><span>فرد إطفاء</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>جاري تحميل تفاصيل التصريح...</p>
+</div>

@@ -1,0 +1,42 @@
+<div class="dashboard-wrapper">
+
+  <!-- Header Bar -->
+  <div class="dashboard-header-bar" [class.scrolled]="isScrolled">
+    <div class="header-left">
+      <h1 class="page-title">لوحة التحكم</h1>
+      <span class="timestamp">آخر تحديث: {{ getCurrentTime() }}</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" (click)="refreshData()" title="تحديث">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+          <path
+            d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+        </svg>
+      </button>
+      <button class="btn-primary-small" (click)="createNewPermit()">+ تصريح جديد</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-item" routerLink="/dashboard/overview" routerLinkActive="active">
+      نظرة عامة
+    </button>
+    <button class="tab-item" routerLink="/dashboard/analytics" routerLinkActive="active">
+      التحليلات
+    </button>
+    <button class="tab-item" routerLink="/dashboard/compliance" routerLinkActive="active">
+      السلامة والامتثال
+    </button>
+    <button class="tab-item" routerLink="/dashboard/calendar" routerLinkActive="active">
+      التقويم
+    </button>
+  </div>
+
+  <!-- Main Content - Router Outlet for Child Components -->
+  <div class="dashboard-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

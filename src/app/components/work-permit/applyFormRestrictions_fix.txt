@@ -1,0 +1,42 @@
+  applyFormRestrictions(): void {
+    if (!this.currentPermit) {
+      this.editMode = 'full';
+      return;
+    }
+
+    const canEditFull = this.canEditFullPermit();
+    const canEditActualOnly = this.canEditOnlyActualTimes();
+
+    if (!canEditFull && !canEditActualOnly) {
+      // Read-only mode
+      this.editMode = 'readonly';
+      this.permitForm.disable();
+      return;
+    }
+
+    if (canEditActualOnly) {
+      // Limited edit mode - only actual work times
+      this.editMode = 'limited';
+      
+      // Disable all fields first
+      this.permitForm.disable();
+      
+      // Enable the timings group first (required for nested controls to work)
+      const timings = this.permitForm.get('timings');
+      timings?.enable();
+      
+      // Then disable all timing fields except actual work times
+      timings?.get('date')?.disable();
+      timings?.get('time')?.disable();
+      timings?.get('expectedEndDate')?.disable();
+      timings?.get('expectedEndTime')?.disable();
+      timings?.get('dailyWorkStart')?. disable();
+      timings?.get('dailyWorkEnd')?.disable();
+      
+      // actualEndDate and actualEndTime remain enabled
+    } else {
+      // Full edit mode
+      this.editMode = 'full';
+      this.permitForm.enable();
+    }
+  }
