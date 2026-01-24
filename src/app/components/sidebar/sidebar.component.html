@@ -26,7 +26,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
       </svg>
-      <span class="mr-3">Collapse</span>
+      <span class="mr-3">تصغير</span>
       } @else {
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
@@ -129,7 +129,7 @@
             </div>
             @if (isSidebarOpen) {
             <div class="mr-3">
-              <p class="text-sm font-medium text-right">{{ authService.getCurrentUser()?.fullName || 'User' }}</p>
+              <p class="text-sm font-medium text-right">{{ authService.getCurrentUser()?.fullName || 'مستخدم' }}</p>
               <p class="text-xs text-gray-400 text-right">{{ authService.getCurrentUser()?.email || 'user@airport.com'
                 }}</p>
             </div>

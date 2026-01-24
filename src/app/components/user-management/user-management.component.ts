@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService, UserDto } from '../../services/user.service';
 import { DepartmentService } from '../../services/department.service';
 import { ToastService } from '../../services/toast.service';
@@ -56,7 +56,7 @@ export class UserManagementComponent implements OnInit {
             phoneNumber: [''],
             birthDate: [null],
             departmentId: [null],
-            role: ['User', Validators.required]
+            roles: this.fb.array([], Validators.required)
         });
 
         this.resetForm = this.fb.group({
@@ -73,7 +73,7 @@ export class UserManagementComponent implements OnInit {
             phoneNumber: [''],
             birthDate: [null],
             departmentId: [null],
-            role: ['', Validators.required]
+            roles: this.fb.array([], Validators.required)
         });
     }
 
@@ -92,6 +92,29 @@ export class UserManagementComponent implements OnInit {
 
     get ef() {
         return this.editForm.controls;
+    }
+
+    get createRolesArray() {
+        return this.createForm.get('roles') as FormArray;
+    }
+
+    get editRolesArray() {
+        return this.editForm.get('roles') as FormArray;
+    }
+
+    onRoleChange(event: any, formType: 'create' | 'edit') {
+        const rolesArray = formType === 'create' ? this.createRolesArray : this.editRolesArray;
+        if (event.target.checked) {
+            rolesArray.push(this.fb.control(event.target.value));
+        } else {
+            const index = rolesArray.controls.findIndex((x: any) => x.value === event.target.value);
+            rolesArray.removeAt(index);
+        }
+    }
+
+    isRoleSelected(role: string, formType: 'create' | 'edit'): boolean {
+        const rolesArray = formType === 'create' ? this.createRolesArray : this.editRolesArray;
+        return rolesArray.value.includes(role);
     }
 
     ngOnInit(): void {
@@ -160,7 +183,10 @@ export class UserManagementComponent implements OnInit {
     }
 
     openCreateModal(): void {
-        this.createForm.reset({ role: 'User' });
+        this.createForm.reset();
+        this.createRolesArray.clear();
+        // Default to 'User' role
+        this.createRolesArray.push(this.fb.control('User'));
         this.showCreateModal = true;
     }
 
@@ -177,7 +203,7 @@ export class UserManagementComponent implements OnInit {
         this.submitting = true;
         this.userService.createUser(this.createForm.value).subscribe({
             next: () => {
-                this.toastService.success('User created successfully');
+                this.toastService.success('تم اضافة مستخدم جديد بنجاح');
                 this.showCreateModal = false;
                 this.submitting = false;
                 this.loadUsers();
@@ -191,6 +217,11 @@ export class UserManagementComponent implements OnInit {
 
     openEditModal(user: UserDto): void {
         this.selectedUser = user;
+        this.editRolesArray.clear();
+        if (user.roles) {
+            user.roles.forEach(role => this.editRolesArray.push(this.fb.control(role)));
+        }
+
         this.editForm.patchValue({
             userId: user.id,
             userName: user.userName,
@@ -199,8 +230,7 @@ export class UserManagementComponent implements OnInit {
             nationalId: user.nationalId,
             phoneNumber: user.phoneNumber,
             birthDate: user.birthDate ? new Date(user.birthDate).toISOString().split('T')[0] : null,
-            departmentId: user.departmentId,
-            role: user.roles && user.roles.length > 0 ? user.roles[0] : 'User'
+            departmentId: user.departmentId
         });
         this.showEditModal = true;
     }
@@ -219,13 +249,13 @@ export class UserManagementComponent implements OnInit {
         this.submitting = true;
         this.userService.updateUser(this.editForm.value).subscribe({
             next: () => {
-                this.toastService.success('User updated successfully');
+                this.toastService.success('تم تحديث بيانات المستخدم بنجاح');
                 this.closeEditModal();
                 this.submitting = false;
                 this.loadUsers();
             },
             error: (err) => {
-                this.toastService.error(err.error?.message || 'Failed to update user');
+                this.toastService.error(err.error?.message || 'فشل تحديث بيانات المستخدم');
                 this.submitting = false;
             }
         });
@@ -251,7 +281,7 @@ export class UserManagementComponent implements OnInit {
         this.submitting = true;
         this.userService.resetPassword(this.selectedUser.id, this.resetForm.value.newPassword).subscribe({
             next: () => {
-                this.toastService.success(`Password reset successfully for ${this.selectedUser?.userName}`);
+                this.toastService.success(`تم إعادة تعيين كلمة المرور لـ ${this.selectedUser?.userName} بنجاح`);
                 this.closeResetModal();
                 this.submitting = false;
             },

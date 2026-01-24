@@ -20,13 +20,13 @@ export class SidebarComponent {
 
   menuItems = [
     {
-      title: 'Dashboard',
+      title: 'لوحة التحكم',
       icon: 'dashboard',
       route: '/dashboard',
       active: false
     },
     {
-      title: 'Work Permits',
+      title: 'تصاريح العمل',
       icon: 'document',
       route: '/work-permits',
       active: true,
@@ -34,12 +34,12 @@ export class SidebarComponent {
       expanded: false,
       children: [
         {
-          title: 'All Permits',
+          title: ' التصاريح',
           route: '/work-permits',
           icon: 'list'
         },
         {
-          title: 'Create Permit',
+          title: 'إنشاء تصريح',
           route: '/work-permit/new',
           icon: 'plus'
         }
