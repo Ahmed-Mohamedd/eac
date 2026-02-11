@@ -7,6 +7,7 @@ export interface WorkPermitListDto {
   createdAt: string;
   workPermitStatusName: string;
   supervisorEngineer: string;
+  isSigned: boolean;  // Track if permit is signed by S&H
 }
 
 export interface PaginatedResult<T> {

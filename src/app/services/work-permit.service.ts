@@ -71,4 +71,25 @@ export class WorkPermitService {
             responseType: 'blob'  // Important: tells Angular to expect binary data
         });
     }
+
+    /**
+     * Export work permit to PDF document (secure, read-only format)
+     * Downloads the permit as a .pdf file
+     */
+    exportWorkPermitToPdf(id: number): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/export-pdf/${id}`, {
+            responseType: 'blob'
+        });
+    }
+
+    /**
+     * Sign work permit (S&H role only)
+     * Calls the backend to mark the permit as signed by the S&H representative
+     */
+    signWorkPermit(workPermitId: number, shUserId: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/sign`, {
+            workPermitId,
+            shUserId
+        });
+    }
 }

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkPermitService } from '../../services/work-permit.service';
 import { WorkPermitDetailDto } from '../../models/work-permit-detail';
+import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-work-permit-detail',
@@ -15,6 +17,7 @@ export class WorkPermitDetailComponent implements OnInit {
   permit: WorkPermitDetailDto | null = null;
   isLoading = true;
   permitId!: number;
+  showSignModal = false;
 
   // Static work locations mapping (matches database)
   private workLocations: { [key: number]: string } = {
@@ -26,7 +29,9 @@ export class WorkPermitDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private workPermitService: WorkPermitService
+    private workPermitService: WorkPermitService,
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -93,6 +98,38 @@ export class WorkPermitDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Export work permit to PDF document (secure, read-only)
+   * Calls backend API to generate and download .pdf file
+   */
+  exportToPdf(): void {
+    if (!this.permitId) {
+      console.error('No permit ID available for PDF export');
+      return;
+    }
+
+    this.workPermitService.exportWorkPermitToPdf(this.permitId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `WorkPermit_${this.permitId}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        console.log('Work permit exported to PDF successfully');
+      },
+      error: (error) => {
+        console.error('Error exporting to PDF:', error);
+        // The error interceptor will handle showing the toast
+      }
+    });
+  }
+
   // Keep the print method for those who still want to print the page
   printPermit(): void {
     window.print();
@@ -137,5 +174,126 @@ export class WorkPermitDetailComponent implements OnInit {
       this.permit.firefighterRequired ||
       this.permit.otherMeansRequired
     );
+  }
+
+  /**
+   * Check if current user has S&H role
+   */
+  isShUser(): boolean {
+    return this.authService.hasRole('S&H');
+  }
+
+  /**
+   * Check if permit can be signed (not already signed and user is S&H)
+   */
+  canSignPermit(): boolean {
+    return this.isShUser() && this.permit?.isSigned === false;
+  }
+
+  /**
+   * Show sign confirmation modal
+   */
+  signPermit(): void {
+    this.showSignModal = true;
+  }
+
+  /**
+   * Close sign modal
+   */
+  closeSignModal(): void {
+    this.showSignModal = false;
+  }
+
+  /**
+   * Confirm and execute the signing
+   */
+  confirmSign(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user?.id) {
+      this.toastService.error('خطأ في معرف المستخدم');
+      this.closeSignModal();
+      return;
+    }
+
+    if (!this.permitId) {
+      this.toastService.error('خطأ في معرف التصريح');
+      this.closeSignModal();
+      return;
+    }
+
+    this.workPermitService.signWorkPermit(this.permitId, user.id).subscribe({
+      next: () => {
+        this.toastService.success('تم التوقيع علي التصريح بنجاح');
+        this.closeSignModal();
+        this.loadPermitDetails(); // Reload to show updated status
+      },
+      error: () => {
+        this.closeSignModal();
+        // Error interceptor will show the toast
+      }
+    });
+  }
+
+  /**
+   * Check if permit can be exported to Word
+   * Business Rule: 
+   * - Pending = NEVER allowed (must be approved first, even if signed)
+   * - Approved/In Progress/Completed = Always allowed (can only reach these if signed)
+   * - Rejected/Cancelled = Only allowed if signed
+   */
+  canExportPermit(): boolean {
+    if (!this.permit) return false;
+
+    const status = this.permit.workPermitStatusName || '';
+
+    // Block all Pending permits (even if signed - must wait for approval)
+    if (status === 'قيد الانتظار') {
+      return false;
+    }
+
+    // Auto-allow for advanced statuses (they can only exist if signed due to workflow)
+    const autoAllowedStatuses = ['موافق عليه', 'قيد التنفيذ', 'مكتمل'];
+    if (autoAllowedStatuses.includes(status)) {
+      return true; // Must be signed to reach these statuses
+    }
+
+    // For Rejected/Cancelled: must be signed
+    if (this.permit.isSigned === false) {
+      return false; // Block export if not signed
+    }
+
+    // Allow if signed or isSigned is undefined (backward compatibility)
+    return true;
+  }
+
+  /**
+   * Get dynamic tooltip message for export button
+   * Shows context-specific reason why export is disabled
+   */
+  getExportTooltip(): string {
+    if (!this.permit) return 'غير متاح للتصدير حالياً';
+
+    const status = this.permit.workPermitStatusName || '';
+
+    // If export is allowed, show success message
+    if (this.canExportPermit()) {
+      return 'تصدير إلى Word';
+    }
+
+    // Pending status (even if signed)
+    if (status === 'قيد الانتظار') {
+      if (this.permit.isSigned === true) {
+        return 'في انتظار موافقة المشرف لتصدير التصريح';
+      }
+      return 'يتطلب توقيع السلامة والصحة المهنية ثم موافقة المشرف';
+    }
+
+    // Rejected/Cancelled without signature - not available for export
+    if (this.permit.isSigned === false) {
+      return 'غير متاح للتصدير حالياً';
+    }
+
+    // Default fallback
+    return 'غير متاح للتصدير حالياً';
   }
 }

@@ -223,9 +223,14 @@ export class MainWorkPermitsComponent implements OnInit {
     const isAdmin = this.isAdmin();
     const allStatuses = this.statuses;
 
+    // Check if this is an unsigned pending permit
+    const isUnsignedPending = currentStatus === 'قيد الانتظار' &&
+      this.selectedPermit?.isSigned === false;
+
     // Status transition rules:
     // - Normal users can ONLY: Approved→In Progress (4), In Progress→Completed (5)
     // - Admin can do all transitions as before
+    // - CRITICAL: Cannot change from Pending unless signed by S&H (except Cancelled/Rejected)
     const transitions: { [key: string]: number[] } = {
       'قيد الانتظار': isAdmin ? [2, 3, 6] : [],           // Pending: Admin only can change
       'موافق عليه': isAdmin ? [4, 6] : [4],               // Approved: User can → In Progress (4)
@@ -235,14 +240,24 @@ export class MainWorkPermitsComponent implements OnInit {
       'ملغي': isAdmin ? [1] : []                           // Cancelled: Admin only
     };
 
-    const allowedStatusIds = transitions[currentStatus] || [];
+    let allowedStatusIds = transitions[currentStatus] || [];
+
+    // If it's an unsigned pending permit, only allow Cancelled (6) and Rejected (3)
+    if (isUnsignedPending && isAdmin) {
+      allowedStatusIds = allowedStatusIds.filter(id => id === 3 || id === 6);
+    }
+
     return allStatuses.filter(s => allowedStatusIds.includes(s.id));
   }
 
   // Check if the current user can change the status of this permit
   canChangeStatus(permit: WorkPermitListDto): boolean {
+    // Note: We no longer hide the button for unsigned permits
+    // Instead, we show a warning message in the modal
+    // This provides better UX - users know WHY they can't change status
+
     if (this.isAdmin()) {
-      // Admin can always change status (except Completed)
+      // Admin can always see status change option (except Completed)
       return permit.workPermitStatusName !== 'مكتمل';
     }
 
@@ -256,6 +271,65 @@ export class MainWorkPermitsComponent implements OnInit {
   isAdmin(): boolean {
     const currentUser = this.authService.getCurrentUser();
     return currentUser?.roles?.includes('Admin') || false;
+  }
+
+  /**
+   * Check if permit can be exported to Word
+   * Business Rule: 
+   * - Pending = NEVER allowed (must be approved first, even if signed)
+   * - Approved/In Progress/Completed = Always allowed (can only reach these if signed)
+   * - Rejected/Cancelled = Only allowed if signed
+   */
+  canExportPermit(permit: WorkPermitListDto): boolean {
+    const status = permit.workPermitStatusName || '';
+
+    // Block all Pending permits (even if signed - must wait for approval)
+    if (status === 'قيد الانتظار') {
+      return false;
+    }
+
+    // Auto-allow for advanced statuses (they can only exist if signed due to workflow)
+    const autoAllowedStatuses = ['موافق عليه', 'قيد التنفيذ', 'مكتمل'];
+    if (autoAllowedStatuses.includes(permit.workPermitStatusName || '')) {
+      return true; // Must be signed to reach these statuses
+    }
+
+    // For Pending/Rejected/Cancelled: must be signed
+    if (permit.isSigned === false) {
+      return false; // Block export if not signed
+    }
+
+    // Allow if signed or isSigned is undefined (backward compatibility)
+    return true;
+  }
+
+  /**
+   * Get dynamic tooltip message for export button
+   * Shows context-specific reason why export is disabled
+   */
+  getExportTooltip(permit: WorkPermitListDto): string {
+    const status = permit.workPermitStatusName || '';
+
+    // If export is allowed, show success message
+    if (this.canExportPermit(permit)) {
+      return 'تصدير إلى Word';
+    }
+
+    // Pending status (even if signed)
+    if (status === 'قيد الانتظار') {
+      if (permit.isSigned === true) {
+        return 'في انتظار موافقة المشرف لتصدير التصريح';
+      }
+      return 'يتطلب توقيع السلامة والصحة المهنية ثم موافقة المشرف';
+    }
+
+    // Rejected/Cancelled without signature - not available for export
+    if (permit.isSigned === false) {
+      return 'غير متاح للتصدير حالياً';
+    }
+
+    // Default fallback
+    return 'غير متاح للتصدير حالياً';
   }
 
   /**
@@ -290,6 +364,38 @@ export class MainWorkPermitsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error exporting work permit:', error);
+        // The error interceptor will handle showing the toast
+      }
+    });
+  }
+
+  /**
+   * Export work permit to PDF document (secure, read-only)
+   * Calls backend API to generate and download .pdf file
+   */
+  exportToPdf(permitId: number): void {
+    if (!permitId) {
+      console.error('No permit ID available for PDF export');
+      return;
+    }
+
+    this.workPermitService.exportWorkPermitToPdf(permitId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `WorkPermit_${permitId}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        console.log(`Work permit ${permitId} exported to PDF successfully`);
+      },
+      error: (error) => {
+        console.error('Error exporting to PDF:', error);
         // The error interceptor will handle showing the toast
       }
     });

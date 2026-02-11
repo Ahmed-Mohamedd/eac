@@ -16,11 +16,19 @@
         </div>
 
         <div class="header-actions">
-            <button class="btn-action btn-export" (click)="exportToWord()">
+            <button class="btn-action btn-export" (click)="exportToWord()" [disabled]="!canExportPermit()"
+                [title]="getExportTooltip()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                 </svg>
                 تصدير Word
+            </button>
+            <button class="btn-action btn-sign" *ngIf="canSignPermit()" (click)="signPermit()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 17l3-3 3 3 6-6 6 6"></path>
+                    <path d="M14 7h7v7"></path>
+                </svg>
+                توقيع التصريح
             </button>
             <button class="btn-action btn-edit" (click)="editPermit()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -43,6 +51,23 @@
                     <span class="status-badge" [ngClass]="getStatusClass(permit.workPermitStatusName)">
                         {{ permit.workPermitStatusName }}
                     </span>
+                </div>
+            </div>
+
+            <!-- Signed Indicator Card -->
+            <div class="card signed-indicator-card" *ngIf="permit.isSigned">
+                <div class="card-body">
+                    <div class="signed-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <div class="signed-text">
+                            <strong>تم التوقيع على التصريح</strong>
+                            <span>تم توقيع هذا التصريح من قبل ممثل السلامة والصحة المهنية</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -307,6 +332,37 @@
             </div>
 
         </main>
+    </div>
+</div>
+
+<!-- Sign Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showSignModal" (click)="closeSignModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            <h2>تأكيد توقيع التصريح</h2>
+        </div>
+        <div class="modal-body">
+            <p>هل أنت متأكد من توقيع تصريح العمل رقم <strong>#{{ permit?.id }}</strong>؟</p>
+            <p class="modal-note">بعد التوقيع، سيتم تحديث حالة التصريح وإرسال إشعار للأطراف المعنية.</p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-cancel" (click)="closeSignModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+                إلغاء
+            </button>
+            <button class="btn-modal btn-confirm" (click)="confirmSign()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+                تأكيد التوقيع
+            </button>
+        </div>
     </div>
 </div>
 

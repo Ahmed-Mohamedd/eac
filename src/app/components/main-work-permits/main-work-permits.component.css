@@ -847,4 +847,352 @@
     width: 95%;
     margin: 1rem;
   }
+}/* Warning Box for Unsigned Permits */
+.warning-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.warning-box svg {
+    color: #f59e0b;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.warning-text {
+    flex: 1;
+}
+
+.warning-text strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: #d97706;
+    margin-bottom: 6px;
+}
+
+.warning-text p {
+    font-size: 14px;
+    color: #92400e;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.btn-export {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #2563eb;
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-export:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-export:disabled:hover {
+  transform: none;
+}
+
+/* PDF Export button styling */
+.btn-pdf {
+  background: #dc2626;
+  color: white;
+  margin-right: 8px;
+}
+
+.btn-pdf:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+.btn-pdf:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-pdf:disabled:hover {
+  transform: none;
+  background: #f3f4f6;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE FIRST APPROACH
+   ============================================ */
+
+/* Mobile Screens (Default - 0 to 767px) */
+@media (max-width: 767px) {
+  /* Container adjustments */
+  .main-work-permits-container {
+    padding: 1rem;
+  }
+
+  /* Header */
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  /* Filters */
+  .filters-card {
+    padding: 1rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+
+  .btn-filter,
+  .btn-clear {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  /* Transform table to card layout */
+  .table-card {
+    padding: 0.5rem;
+  }
+
+  .table-wrapper {
+    overflow-x: visible;
+  }
+
+  .permits-table {
+    display: block;
+  }
+
+  .permits-table thead {
+    display: none; /* Hide table headers on mobile */
+  }
+
+  .permits-table tbody {
+    display: block;
+  }
+
+  .permits-table tbody tr {
+    display: block;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .permits-table tbody tr:hover {
+    transform: none; /* Disable hover transform on mobile */
+  }
+
+  .permits-table td {
+    display: block;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f7fafc;
+    text-align: right;
+  }
+
+  .permits-table td:last-child {
+    border-bottom: none;
+  }
+
+  /* Add labels before each cell value */
+  .permits-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #4a5568;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  /* Arabic labels using Unicode escape sequences */
+  .permits-table .id-cell::before {
+    content: '\0631\0642\0645\0020\0627\0644\062A\0635\0631\064A\062D'; /* رقم التصريح */
+  }
+
+  .permits-table td:nth-child(2)::before {
+    content: '\0627\0644\0642\0633\0645'; /* القسم */
+  }
+
+  .permits-table td:nth-child(3)::before {
+    content: '\0645\0646\0634\0623\0020\0627\0644\062A\0635\0631\064A\062D'; /* منشئ التصريح */
+  }
+
+  .permits-table td:nth-child(4)::before {
+    content: '\062A\0627\0631\064A\062E\0020\0627\0644\0625\0646\0634\0627\0621'; /* تاريخ الإنشاء */
+  }
+
+  .permits-table td:nth-child(5)::before {
+    content: '\0627\0644\0645\0647\0646\062F\062F\0020\0627\0644\0645\0634\0631\0641'; /* المهندس المشرف */
+  }
+
+  .permits-table td:nth-child(6)::before {
+    content: '\0627\0644\062D\0627\0644\0629'; /* الحالة */
+  }
+
+  .permits-table .export-cell::before {
+    content: '\0637\0628\0627\0639\0629'; /* طباعة */
+  }
+
+  .permits-table .actions-cell::before {
+    content: '\0627\0644\0625\062C\0631\0627\0621\0627\062A'; /* الإجراءات */
+  }
+
+  /* User cell mobile layout */
+  .user-cell {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  /* Action buttons mobile layout */
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .btn-action {
+    min-width: 44px; /* Touch-friendly size */
+    min-height: 44px;
+    padding: 0.75rem;
+  }
+
+  /* Status badge mobile */
+  .status-badge {
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Pagination mobile */
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .page-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Tablet Screens (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-work-permits-container {
+    padding: 1.5rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Keep table but make it scrollable */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .permits-table {
+    min-width: 900px;
+  }
+
+  .permits-table th,
+  .permits-table td {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  /* Slightly larger touch targets */
+  .btn-action {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Desktop Screens (1024px and up) */
+@media (min-width: 1024px) {
+  /* Original desktop styles apply */
+  .filters-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Large Desktop Screens (1440px and up) */
+@media (min-width: 1440px) {
+  .main-work-permits-container {
+    max-width: 1600px;
+  }
+
+  .page-title {
+    font-size: 2.25rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .filters-card,
+  .btn-primary,
+  .action-buttons,
+  .pagination {
+    display: none !important;
+  }
+
+  .main-work-permits-container {
+    padding: 0;
+  }
+
+  .permits-table {
+    box-shadow: none;
+  }
+
+  .permits-table tbody tr:hover {
+    transform: none;
+  }
+}
+
+/* Landscape orientation for mobile devices */
+@media (max-width: 767px) and (orientation: landscape) {
+  .main-work-permits-container {
+    padding: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
 }

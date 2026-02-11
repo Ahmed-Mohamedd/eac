@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -14,7 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'airport-msan-viewer';
+  title = 'eac';
+  isMobileSidebarOpen = false;
 
   constructor(
     public authService: AuthService,
@@ -26,5 +28,23 @@ export class AppComponent {
 
     // Set RTL direction for Arabic
     document.dir = 'rtl';
+  }
+
+  /**
+   * Toggle mobile sidebar open/closed
+   */
+  toggleMobileSidebar(): void {
+    this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
+  }
+
+  /**
+   * Close sidebar when clicking on overlay (backdrop)
+   */
+  onSidebarClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    // Close if clicking on the backdrop (::before pseudo-element area)
+    if (target.tagName === 'APP-SIDEBAR') {
+      this.isMobileSidebarOpen = false;
+    }
   }
 }

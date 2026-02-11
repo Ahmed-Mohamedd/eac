@@ -27,7 +27,7 @@ export class UserManagementComponent implements OnInit {
     isActiveFilter?: boolean;
 
     departments: any[] = [];
-    roles = ['Supervisor', 'Admin', 'User'];
+    roles = ['Supervisor', 'Admin', 'User' ,'S&H'];
 
     // Modal state
     showCreateModal = false;
@@ -136,7 +136,7 @@ export class UserManagementComponent implements OnInit {
         this.userService.getUsers(params).subscribe({
             next: (result) => {
                 this.users = result.data;
-                this.totalCount = result.count;
+                this.totalCount = result.totalCount;
                 this.loading = false;
             },
             error: (err) => {

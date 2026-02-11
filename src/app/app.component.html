@@ -1,5 +1,16 @@
 <div class="flex flex-row-reverse h-screen overflow-hidden" dir="rtl">
-  <app-sidebar *ngIf="authService.currentUser$ | async"></app-sidebar>
+  <!-- Hamburger Menu Button (Mobile Only) -->
+  <button *ngIf="authService.currentUser$ | async" class="mobile-menu-button" [class.open]="isMobileSidebarOpen"
+    (click)="toggleMobileSidebar()" aria-label="Toggle menu">
+    <div class="hamburger-icon">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </div>
+  </button>
+
+  <app-sidebar *ngIf="authService.currentUser$ | async" [class.mobile-open]="isMobileSidebarOpen"
+    (click)="onSidebarClick($event)"></app-sidebar>
   <main class="flex-1 overflow-y-auto bg-gray-50">
     <router-outlet></router-outlet>
   </main>

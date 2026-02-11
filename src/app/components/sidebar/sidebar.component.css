@@ -1,8 +1,74 @@
+/* ============================================
+   RESPONSIVE SIDEBAR NAVIGATION
+   ============================================ */
+
 /* Sidebar on the right for RTL Arabic layout */
-app-sidebar {
-  order: 2; /* Ensure sidebar is on the right */
+:host {
+  order: 2;
 }
 
-main {
-  order: 1; /* Ensure main content is on the left */
+/* Mobile & Tablet - Responsive Sidebar */
+@media (max-width: 1023px) {
+
+  /* Hide sidebar by default on mobile - use :host to target the component itself */
+  :host {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(100%) !important;
+    /* Hidden off-screen to the right */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* When sidebar has mobile-open class, slide in */
+  :host(.mobile-open) {
+    transform: translateX(0) !important;
+    /* Slide into view */
+  }
+
+  /* Dark overlay backdrop */
+  :host::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Show backdrop when sidebar is open */
+  :host(.mobile-open)::before {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+  }
+
+  /* Ensure sidebar content is full height and scrollable */
+  :host>div {
+    height: 100vh !important;
+    overflow-y: auto;
+  }
+}
+
+/* Tablet width adjustment */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :host {
+    width: 280px;
+  }
+}
+
+/* Desktop - sidebar visible normally */
+@media (min-width: 1024px) {
+  :host {
+    position: relative !important;
+    transform: none !important;
+  }
 }

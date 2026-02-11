@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService, UserDto } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import SignaturePad from 'signature_pad';
+
 
 @Component({
   selector: 'app-profile',
@@ -29,6 +31,12 @@ export class ProfileComponent implements OnInit, OnChanges {
   isChangingPassword = false;
   editForm: FormGroup;
   passwordForm: FormGroup;
+
+  // Signature Pad properties
+  @ViewChild('signatureCanvas') signatureCanvas!: ElementRef<HTMLCanvasElement>;
+  signaturePad?: SignaturePad;
+  isSignaturePadOpen = false;
+  isSignatureEmpty = true;
 
   constructor(
     private userService: UserService,
@@ -161,6 +169,83 @@ export class ProfileComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.toastService.error(err.error?.Message || 'Failed to change password');
+        this.loading = false;
+      }
+    });
+  }
+
+  // Signature Pad Methods
+  openSignaturePad(): void {
+    this.isSignaturePadOpen = true;
+    this.isEditing = false;
+    this.isChangingPassword = false;
+
+    // Initialize signature pad after view is ready
+    setTimeout(() => {
+      this.initSignaturePad();
+    }, 100);
+  }
+
+  closeSignaturePad(): void {
+    this.isSignaturePadOpen = false;
+    if (this.signaturePad) {
+      this.signaturePad.clear();
+    }
+  }
+
+  initSignaturePad(): void {
+    if (!this.signatureCanvas) return;
+
+    const canvas = this.signatureCanvas.nativeElement;
+
+    // Set canvas size to match container
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    // Initialize SignaturePad
+    this.signaturePad = new SignaturePad(canvas, {
+      backgroundColor: 'rgb(255, 255, 255)',
+      penColor: 'rgb(0, 0, 255)',  // Pure black for maximum contrast
+      minWidth: 2.5,  // Thicker minimum stroke width (increased from default ~0.5)
+      maxWidth: 2.5,  // Thicker maximum stroke width (increased from default ~2.5)
+      throttle: 0,
+      velocityFilterWeight: 0.7
+    });
+
+    // Listen for changes
+    this.signaturePad.addEventListener('endStroke', () => {
+      this.isSignatureEmpty = this.signaturePad!.isEmpty();
+    });
+
+    this.isSignatureEmpty = true;
+  }
+
+  clearSignature(): void {
+    if (this.signaturePad) {
+      this.signaturePad.clear();
+      this.isSignatureEmpty = true;
+    }
+  }
+
+  saveSignature(): void {
+    if (!this.signaturePad || this.signaturePad.isEmpty()) {
+      this.toastService.error('الرجاء إضافة التوقيع أولاً');
+      return;
+    }
+
+    // Convert to base64 PNG
+    const base64Signature = this.signaturePad.toDataURL('image/png');
+
+    this.loading = true;
+    this.userService.updateSignature(base64Signature).subscribe({
+      next: (res) => {
+        this.toastService.success('تم حفظ التوقيع بنجاح');
+        this.closeSignaturePad();
+        this.loadProfile();  // Reload to show new signature
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'فشل حفظ التوقيع');
         this.loading = false;
       }
     });

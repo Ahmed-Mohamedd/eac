@@ -24,6 +24,7 @@
         "WP-005-004": "Cannot create work permit for past dates",
         "WP-005-005": "Permit already approved - Cannot be edited",
         "WP-005-006": "Permit in use - Cannot be deleted",
+        "WP-005-007": "Cannot change permit status until it is signed by the Occupational Safety and Health representative",
         "WP-006-001": "Work permit not found",
         "WP-006-002": "User not found",
         "WP-006-003": "Department not found",

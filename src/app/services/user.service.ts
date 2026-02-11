@@ -16,12 +16,14 @@ export interface UserDto {
     isActive: boolean;
     createdAt: string;
     roles: string[];
+    signature?: string;              // Base64 image for digital signature
+    signatureUpdatedAt?: Date;       // Last signature update timestamp
 }
 
 export interface PaginatedResult<T> {
     pageIndex: number;
     pageSize: number;
-    count: number;
+    totalCount: number;
     data: T[];
 }
 
@@ -81,5 +83,15 @@ export class UserService {
 
     changePassword(passwords: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/change-password`, passwords);
+    }
+
+    /**
+     * Update current user's digital signature
+     * @param base64Signature - Base64 encoded signature image (data:image/png;base64,...)
+     */
+    updateSignature(base64Signature: string): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/signature`, {
+            signature: base64Signature
+        });
     }
 }

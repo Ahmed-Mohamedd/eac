@@ -68,6 +68,7 @@ export interface WorkPermitDetailDto {
     signature: string;
     contractorsRepresentativesSignature?: string;
     occupationalSafteyAndHealthRepresentative?: string;
+    isSigned: boolean;  // Track if permit has been signed by S&H
 
     // Child Collections
     workers: WorkerDto[];

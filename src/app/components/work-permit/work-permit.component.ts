@@ -104,7 +104,7 @@ export class WorkPermitComponent implements OnInit {
         contractor: [''],
         phone: ['', [Validators.required, Validators.maxLength(20)]],
         signature: ['', [Validators.required, Validators.maxLength(200)]],
-        safetyOfficer: ['']
+        safetyOfficer: [{ value: '', disabled: true }]  // Disabled field
       })
     });
   }
@@ -599,6 +599,10 @@ export class WorkPermitComponent implements OnInit {
       timings?.get('dailyWorkEnd')?.disable({ emitEvent: false });
 
       // actualEndDate and actualEndTime remain enabled
+
+      // Always keep safetyOfficer disabled
+      this.permitForm.get('signatures.safetyOfficer')?.disable({ emitEvent: false });
+
       console.log('Limited edit mode applied');
       console.log('actualEndDate disabled?', timings?.get('actualEndDate')?.disabled);
       console.log('actualEndTime disabled?', timings?.get('actualEndTime')?.disabled);
@@ -606,6 +610,9 @@ export class WorkPermitComponent implements OnInit {
       // Full edit mode
       this.editMode = 'full';
       this.permitForm.enable();
+
+      // Always keep safetyOfficer disabled even in full edit mode
+      this.permitForm.get('signatures.safetyOfficer')?.disable({ emitEvent: false });
     }
   }
 

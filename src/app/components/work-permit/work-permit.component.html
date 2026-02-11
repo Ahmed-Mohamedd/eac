@@ -1,21 +1,12 @@
-
 <div class="work-permit-wrapper">
 
     <!-- Full-screen overlay during submission -->
-  <app-loading-spinner 
-    *ngIf="isSubmitting"
-    mode="overlay"
-    size="large"
-    message="جاري حفظ البيانات...">
-  </app-loading-spinner>
+    <app-loading-spinner *ngIf="isSubmitting" mode="overlay" size="large" message="جاري حفظ البيانات...">
+    </app-loading-spinner>
 
-  <!-- Full-screen overlay while loading permit data -->
-  <app-loading-spinner 
-    *ngIf="isLoadingPermit"
-    mode="overlay"
-    size="large"
-    message="جاري تحميل البيانات...">
-  </app-loading-spinner>
+    <!-- Full-screen overlay while loading permit data -->
+    <app-loading-spinner *ngIf="isLoadingPermit" mode="overlay" size="large" message="جاري تحميل البيانات...">
+    </app-loading-spinner>
 
     <div class="page">
         <form [formGroup]="permitForm" (ngSubmit)="onSubmit()" class="document-container">
@@ -97,23 +88,18 @@
                                                 <label>الإدارة <span class="required-mark">*</span></label>
                                                 <!-- Show inline spinner while loading departments -->
                                                 <div *ngIf="isLoadingDepartments" class="loading-container">
-                                                    <app-loading-spinner 
-                                                    size="small"
-                                                    message="جاري تحميل الأقسام...">
+                                                    <app-loading-spinner size="small" message="جاري تحميل الأقسام...">
                                                     </app-loading-spinner>
                                                 </div>
-                                                
+
                                                 <!-- Show dropdown when loaded -->
-                                                <select 
-                                                    *ngIf="!isLoadingDepartments"
-                                                    class="field-input" 
-                                                    formControlName="department" 
-                                                    required>
+                                                <select *ngIf="!isLoadingDepartments" class="field-input"
+                                                    formControlName="department" required>
                                                     <option *ngFor="let dept of departments" [value]="dept.id">
-                                                    {{ dept.name }}
+                                                        {{ dept.name }}
                                                     </option>
                                                 </select>
-                                                
+
                                                 <div class="error-message" *ngIf="isFieldInvalid('department')">
                                                     {{ getFieldError('department') }}
                                                 </div>
@@ -198,7 +184,8 @@
                                     <!-- Work Description -->
                                     <div class="full-field">
                                         <label>وصف العمل<span class="required-mark">*</span></label>
-                                        <textarea class="field-input large" formControlName="workDescription"> </textarea>
+                                        <textarea class="field-input large"
+                                            formControlName="workDescription"> </textarea>
                                         <div class="error-message" *ngIf="isFieldInvalid('workDescription')">
                                             {{ getFieldError('workDescription') }}
                                         </div>
@@ -235,7 +222,8 @@
                                     <section class="section" formGroupName="heights">
                                         <h3 class="section-title">العمل على ارتفاعات</h3>
                                         <div class="full-field">
-                                            <label>أعلى ارتفاع متوقع للعمل عليه<span class="required-mark">*</span></label>
+                                            <label>أعلى ارتفاع متوقع للعمل عليه<span
+                                                    class="required-mark">*</span></label>
                                             <input type="text" class="field-input" formControlName="maxHeight">
                                             <div class="error-message" *ngIf="isFieldInvalid('heights.maxHeight')">
                                                 {{ getFieldError('heights.maxHeight') }}
@@ -372,7 +360,8 @@
                                                     <span>لا</span>
                                                 </label>
                                             </div>
-                                            <div class="error-message" *ngIf="isFieldInvalid('safetyRequirements.fireRisk')">
+                                            <div class="error-message"
+                                                *ngIf="isFieldInvalid('safetyRequirements.fireRisk')">
                                                 {{ getFieldError('safetyRequirements.fireRisk') }}
                                             </div>
                                             <p class="note"
@@ -477,7 +466,8 @@
                                             <div class="signature-item">
                                                 <label>التوقيع<span class="required-mark">*</span></label>
                                                 <input type="text" class="signature-line" formControlName="signature">
-                                                <div class="error-message" *ngIf="isFieldInvalid('signatures.signature')">
+                                                <div class="error-message"
+                                                    *ngIf="isFieldInvalid('signatures.signature')">
                                                     {{ getFieldError('signatures.signature') }}
                                                 </div>
                                             </div>
@@ -504,34 +494,24 @@
 
                         <!-- Actions Bar -->
                         <div class="actions-bar">
-                             <button 
-                                *ngIf="editMode !== 'readonly'" 
-                                type="button" 
-                                class="action-btn btn-save"
-                                (click)="onSubmit()"
-                                [disabled]="isSubmitting">
-                                
+                            <button *ngIf="editMode !== 'readonly'" type="button" class="action-btn btn-save"
+                                (click)="onSubmit()" [disabled]="isSubmitting">
+
                                 <!-- Show spinner when submitting -->
-                                <app-loading-spinner 
-                                *ngIf="isSubmitting"
-                                size="small"
-                                color="white"
-                                messagePosition="inline">
+                                <app-loading-spinner *ngIf="isSubmitting" size="small" color="white"
+                                    messagePosition="inline">
                                 </app-loading-spinner>
-                                
+
                                 <!-- Show text when not submitting -->
                                 <span *ngIf="!isSubmitting">
-                                {{ permitId ? 'حفظ التعديلات' : 'حفظ التصريح' }}
+                                    {{ permitId ? 'حفظ التعديلات' : 'حفظ التصريح' }}
                                 </span>
                                 <span *ngIf="isSubmitting">
-                                جاري الحفظ...
+                                    جاري الحفظ...
                                 </span>
                             </button>
-                            
-                            <button 
-                                *ngIf="editMode === 'readonly'" 
-                                type="button" 
-                                class="action-btn btn-back"
+
+                            <button *ngIf="editMode === 'readonly'" type="button" class="action-btn btn-back"
                                 (click)="router.navigate(['/work-permits'])">
                                 <span>رجوع للقائمة</span>
                             </button>
