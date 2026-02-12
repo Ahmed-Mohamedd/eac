@@ -11,15 +11,7 @@ import SignaturePad from 'signature_pad';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './profile.component.html',
-  styles: [`
-    .profile-modal {
-      animation: fadeIn 0.2s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-  `]
+  styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
@@ -100,7 +92,8 @@ export class ProfileComponent implements OnInit, OnChanges {
         fullName: this.user.fullName,
         nationalId: this.user.nationalId,
         phoneNumber: this.user.phoneNumber,
-        birthDate: this.user.birthDate ? new Date(this.user.birthDate).toISOString().split('T')[0] : ''
+        // Extract date-only string without timezone conversion
+        birthDate: this.user.birthDate ? this.user.birthDate.toString().split('T')[0] : ''
       });
     }
   }

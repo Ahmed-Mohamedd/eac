@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { ProfileComponent } from '../profile/profile.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProfileComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+  @Output() openProfile = new EventEmitter<void>();
 
   constructor(
     public authService: AuthService,
@@ -55,7 +55,6 @@ export class SidebarComponent {
 
   isSidebarOpen = true;
   isProfileExpanded = false;
-  showProfileModal = false;
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -71,8 +70,8 @@ export class SidebarComponent {
     this.isProfileExpanded = !this.isProfileExpanded;
   }
 
-  openProfile() {
-    this.showProfileModal = true;
+  showProfile() {
+    this.openProfile.emit();
     this.isProfileExpanded = false;
   }
 

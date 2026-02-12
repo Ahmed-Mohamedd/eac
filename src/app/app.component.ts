@@ -5,18 +5,20 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AuthService } from './services/auth.service';
 import { ToastComponent } from './components/toast/toast.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, ToastComponent, RouterOutlet],
+  imports: [CommonModule, SidebarComponent, ToastComponent, ProfileComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'eac';
   isMobileSidebarOpen = false;
+  showProfileModal = false;
 
   constructor(
     public authService: AuthService,

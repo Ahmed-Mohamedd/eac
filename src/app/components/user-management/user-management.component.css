@@ -1,2 +1,307 @@
-/* User Management Component Styles */
-/* Most styling is handled via Tailwind CSS */
+/* User Management Component - Responsive Styles */
+
+/* ===========================================
+   MOBILE FIRST RESPONSIVE DESIGN
+   Base styling for mobile, enhanced for larger screens
+   =========================================== */
+
+/* Header Section - Responsive */
+@media (max-width: 640px) {
+
+    /* Stack header items vertically on mobile */
+    .p-6.bg-gray-50>div:first-child {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .p-6.bg-gray-50>div:first-child h1 {
+        font-size: 1.5rem !important;
+    }
+
+    .p-6.bg-gray-50>div:first-child p {
+        font-size: 0.875rem !important;
+    }
+
+    /* Full width button on mobile */
+    .p-6.bg-gray-50>div:first-child button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Filters Section - Responsive */
+@media (max-width: 768px) {
+
+    /* Stack filters vertically */
+    .bg-white.p-4.rounded-xl {
+        flex-direction: column !important;
+    }
+
+    .bg-white.p-4.rounded-xl>div {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+
+    /* Full width filter button */
+    .bg-white.p-4.rounded-xl>button {
+        width: 100%;
+    }
+}
+
+/* Table - Convert to cards on mobile */
+@media (max-width: 768px) {
+
+    /* Hide table headers on mobile */
+    .bg-white.rounded-xl thead {
+        display: none !important;
+    }
+
+    /* Display table body as block */
+    .bg-white.rounded-xl tbody {
+        display: block !important;
+    }
+
+    /* Each row becomes a card */
+    .bg-white.rounded-xl tbody tr {
+        display: block !important;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        background: white;
+    }
+
+    /* Each cell becomes a row */
+    .bg-white.rounded-xl tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0.75rem 0 !important;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .bg-white.rounded-xl tbody td:last-child {
+        border-bottom: none;
+    }
+
+    /* Add labels before content */
+    .bg-white.rounded-xl tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+
+    /* User info cell */
+    .bg-white.rounded-xl tbody td:nth-child(1)::before {
+        content: 'المستخدم';
+    }
+
+    .bg-white.rounded-xl tbody td:nth-child(1) .flex {
+        flex-direction: row-reverse !important;
+    }
+
+    /* Department cell */
+    .bg-white.rounded-xl tbody td:nth-child(2)::before {
+        content: 'القسم';
+    }
+
+    /* Roles cell */
+    .bg-white.rounded-xl tbody td:nth-child(3)::before {
+        content: 'الأدوار';
+    }
+
+    .bg-white.rounded-xl tbody td:nth-child(3) .flex {
+        flex-wrap: wrap !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Status cell */
+    .bg-white.rounded-xl tbody td:nth-child(4)::before {
+        content: 'الحالة';
+    }
+
+    /* Date cell */
+    .bg-white.rounded-xl tbody td:nth-child(5)::before {
+        content: 'تاريخ الإنشاء';
+    }
+
+    /* Actions cell */
+    .bg-white.rounded-xl tbody td:nth-child(6)::before {
+        content: 'الإجراءات';
+    }
+
+    .bg-white.rounded-xl tbody td:nth-child(6) .flex {
+        gap: 1.5rem !important;
+    }
+}
+
+/* Pagination - Responsive */
+@media (max-width: 640px) {
+    .bg-gray-50.px-6.py-4.border-t {
+        flex-direction: column !important;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .bg-gray-50.px-6.py-4.border-t>div:first-child {
+        font-size: 0.75rem !important;
+    }
+
+    .bg-gray-50.px-6.py-4.border-t .flex.gap-2 {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .bg-gray-50.px-6.py-4.border-t button {
+        flex: 1;
+    }
+}
+
+/* Modals - Responsive */
+@media (max-width: 768px) {
+
+    /* Reduce modal padding on mobile */
+    .relative.w-full.max-w-2xl {
+        padding: 1.5rem !important;
+    }
+
+    .relative.w-full.max-w-md {
+        padding: 1.5rem !important;
+    }
+
+    /* Stack form fields in single column */
+    .grid.grid-cols-1.md\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Reduce heading size */
+    .text-2xl.font-bold {
+        font-size: 1.5rem !important;
+    }
+
+    /* Modal buttons */
+    .flex.justify-end.gap-4 {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    .flex.justify-end.gap-4 button {
+        width: 100%;
+    }
+}
+
+/* Very small mobile screens (< 480px) */
+@media (max-width: 480px) {
+    .p-6 {
+        padding: 1rem !important;
+    }
+
+    .mb-6 {
+        margin-bottom: 1rem !important;
+    }
+
+    /* Smaller role badges */
+    .px-2.py-0 {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    /* Smaller status badges */
+    .px-2.py-1 {
+        padding: 0.375rem 0.625rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    /* Smaller action icons */
+    .h-5.w-5 {
+        height: 1.125rem !important;
+        width: 1.125rem !important;
+    }
+
+    /* Avatar size */
+    .h-10.w-10 {
+        height: 2.25rem !important;
+        width: 2.25rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Tablet landscape (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .p-6 {
+        padding: 1.5rem !important;
+    }
+
+    /* Compact table spacing */
+    .px-6.py-3,
+    .px-6.py-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Smaller font sizes */
+    th {
+        font-size: 0.7rem !important;
+    }
+
+    td {
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Loading and Empty States - Responsive */
+@media (max-width: 768px) {
+    .px-6.py-10 {
+        padding: 2rem 1rem !important;
+    }
+
+    .animate-spin.h-8.w-8 {
+        height: 2rem !important;
+        width: 2rem !important;
+    }
+}
+
+/* Role Checkboxes in Modals - Better mobile layout */
+@media (max-width: 640px) {
+    .flex.flex-wrap.gap-6 {
+        gap: 1rem !important;
+        flex-direction: column !important;
+    }
+
+    .inline-flex.items-center {
+        width: 100%;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 0.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    /* Hide modals and actions on print */
+    .fixed.inset-0 {
+        display: none !important;
+    }
+
+    button {
+        display: none !important;
+    }
+
+    /* Expand table for printing */
+    .overflow-x-auto {
+        overflow: visible !important;
+    }
+
+    table {
+        page-break-inside: avoid;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+}

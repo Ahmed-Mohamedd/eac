@@ -10,9 +10,12 @@
   </button>
 
   <app-sidebar *ngIf="authService.currentUser$ | async" [class.mobile-open]="isMobileSidebarOpen"
-    (click)="onSidebarClick($event)"></app-sidebar>
+    (click)="onSidebarClick($event)" (openProfile)="showProfileModal = true"></app-sidebar>
   <main class="flex-1 overflow-y-auto bg-gray-50">
     <router-outlet></router-outlet>
   </main>
 </div>
 <app-toast></app-toast>
+
+<!-- Profile Modal at Root Level (outside sidebar) -->
+<app-profile [isOpen]="showProfileModal" (close)="showProfileModal = false"></app-profile>

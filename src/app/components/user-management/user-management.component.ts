@@ -27,7 +27,7 @@ export class UserManagementComponent implements OnInit {
     isActiveFilter?: boolean;
 
     departments: any[] = [];
-    roles = ['Supervisor', 'Admin', 'User' ,'S&H'];
+    roles = ['Supervisor', 'Admin', 'User', 'S&H'];
 
     // Modal state
     showCreateModal = false;
@@ -229,7 +229,8 @@ export class UserManagementComponent implements OnInit {
             fullName: user.fullName,
             nationalId: user.nationalId,
             phoneNumber: user.phoneNumber,
-            birthDate: user.birthDate ? new Date(user.birthDate).toISOString().split('T')[0] : null,
+            // Extract date-only string without timezone conversion
+            birthDate: user.birthDate ? user.birthDate.toString().split('T')[0] : null,
             departmentId: user.departmentId
         });
         this.showEditModal = true;
