@@ -53,7 +53,9 @@ export class DashboardComponent implements OnInit {
             topStats: this.dashboardService.getTopStatistics(5),
             recentActivity: this.dashboardService.getRecentActivity(10, 7),
             alerts: this.dashboardService.getAlertsSummary(10),
-            compliance: this.dashboardService.getComplianceMetrics()
+            compliance: this.dashboardService.getComplianceMetrics(),
+            shSignatureStats: this.dashboardService.getShSignatureStats(),
+            unsignedPermits: this.dashboardService.getUnsignedPermits(1, 5)
         }).subscribe({
             next: (data) => {
                 // Set all data in the shared service
@@ -64,7 +66,9 @@ export class DashboardComponent implements OnInit {
                     topStats: data.topStats,
                     recentActivity: data.recentActivity,
                     alerts: data.alerts,
-                    compliance: data.compliance
+                    compliance: data.compliance,
+                    shSignatureStats: data.shSignatureStats,
+                    unsignedPermits: data.unsignedPermits
                 });
                 this.isLoading = false;
                 this.dashboardDataService.setLoading(false);

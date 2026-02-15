@@ -218,3 +218,34 @@ export interface ExportDashboardReportCommand {
     dateRange: DateRangeDto;
     includeSections: string[];
 }
+
+// ===========================
+// Signature Stats DTOs
+// ===========================
+
+export interface ShSignatureStatsDto {
+    signedByShCount: number;
+    pendingSignatureCount: number;
+    totalSignedCount: number;
+    totalUnsignedCount: number;
+}
+
+export interface UnsignedPermitDto {
+    id: number;
+    createdBy: string;
+    departmentName: string;
+    workDescription: string;
+    createdAt: string;
+    status: string;
+    supervisorName?: string;
+}
+
+export interface PaginatedResult<T> {
+    pageIndex: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+    data: T[];
+}

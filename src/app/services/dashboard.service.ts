@@ -12,7 +12,10 @@ import {
     ComplianceMetricsDto,
     AlertsSummaryDto,
     UserDashboardDto,
-    ExportDashboardReportCommand
+    ExportDashboardReportCommand,
+    ShSignatureStatsDto,
+    UnsignedPermitDto,
+    PaginatedResult
 } from '../models/dashboard-models';
 
 @Injectable({
@@ -150,5 +153,31 @@ export class DashboardService {
         return this.http.post(`${this.apiUrl}/export`, command, {
             responseType: 'blob'
         });
+    }
+
+    /**
+     * 11. Get S&H Signature Statistics
+     */
+    getShSignatureStats(departmentId?: number): Observable<ShSignatureStatsDto> {
+        let params = new HttpParams();
+        if (departmentId) {
+            params = params.set('departmentId', departmentId.toString());
+        }
+        return this.http.get<ShSignatureStatsDto>(`${this.apiUrl}/sh-signature-stats`, { params });
+    }
+
+    /**
+     * 12. Get Unsigned Permits (Paginated)
+     */
+    getUnsignedPermits(page: number = 1, pageSize: number = 10, departmentId?: number): Observable<PaginatedResult<UnsignedPermitDto>> {
+        let params = new HttpParams()
+            .set('PageIndex', page.toString())
+            .set('PageSize', pageSize.toString());
+
+        if (departmentId) {
+            params = params.set('DepartmentId', departmentId.toString());
+        }
+
+        return this.http.get<PaginatedResult<UnsignedPermitDto>>(`${this.apiUrl}/unsigned-permits`, { params });
     }
 }

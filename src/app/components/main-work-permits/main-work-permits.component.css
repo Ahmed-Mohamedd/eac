@@ -847,41 +847,43 @@
     width: 95%;
     margin: 1rem;
   }
-}/* Warning Box for Unsigned Permits */
+}
+
+/* Warning Box for Unsigned Permits */
 .warning-box {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    background: #fffbeb;
-    border: 2px solid #fbbf24;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #fffbeb;
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
 }
 
 .warning-box svg {
-    color: #f59e0b;
-    flex-shrink: 0;
-    margin-top: 2px;
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .warning-text {
-    flex: 1;
+  flex: 1;
 }
 
 .warning-text strong {
-    display: block;
-    font-size: 15px;
-    font-weight: 700;
-    color: #d97706;
-    margin-bottom: 6px;
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #d97706;
+  margin-bottom: 6px;
 }
 
 .warning-text p {
-    font-size: 14px;
-    color: #92400e;
-    margin: 0;
-    line-height: 1.5;
+  font-size: 14px;
+  color: #92400e;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .btn-export {
@@ -936,6 +938,7 @@
 
 /* Mobile Screens (Default - 0 to 767px) */
 @media (max-width: 767px) {
+
   /* Container adjustments */
   .main-work-permits-container {
     padding: 1rem;
@@ -995,7 +998,8 @@
   }
 
   .permits-table thead {
-    display: none; /* Hide table headers on mobile */
+    display: none;
+    /* Hide table headers on mobile */
   }
 
   .permits-table tbody {
@@ -1013,7 +1017,8 @@
   }
 
   .permits-table tbody tr:hover {
-    transform: none; /* Disable hover transform on mobile */
+    transform: none;
+    /* Disable hover transform on mobile */
   }
 
   .permits-table td {
@@ -1039,35 +1044,43 @@
 
   /* Arabic labels using Unicode escape sequences */
   .permits-table .id-cell::before {
-    content: '\0631\0642\0645\0020\0627\0644\062A\0635\0631\064A\062D'; /* رقم التصريح */
+    content: '\0631\0642\0645\0020\0627\0644\062A\0635\0631\064A\062D';
+    /* رقم التصريح */
   }
 
   .permits-table td:nth-child(2)::before {
-    content: '\0627\0644\0642\0633\0645'; /* القسم */
+    content: '\0627\0644\0642\0633\0645';
+    /* القسم */
   }
 
   .permits-table td:nth-child(3)::before {
-    content: '\0645\0646\0634\0623\0020\0627\0644\062A\0635\0631\064A\062D'; /* منشئ التصريح */
+    content: '\0645\0646\0634\0623\0020\0627\0644\062A\0635\0631\064A\062D';
+    /* منشئ التصريح */
   }
 
   .permits-table td:nth-child(4)::before {
-    content: '\062A\0627\0631\064A\062E\0020\0627\0644\0625\0646\0634\0627\0621'; /* تاريخ الإنشاء */
+    content: '\062A\0627\0631\064A\062E\0020\0627\0644\0625\0646\0634\0627\0621';
+    /* تاريخ الإنشاء */
   }
 
   .permits-table td:nth-child(5)::before {
-    content: '\0627\0644\0645\0647\0646\062F\062F\0020\0627\0644\0645\0634\0631\0641'; /* المهندس المشرف */
+    content: '\0627\0644\0645\0647\0646\062F\062F\0020\0627\0644\0645\0634\0631\0641';
+    /* المهندس المشرف */
   }
 
   .permits-table td:nth-child(6)::before {
-    content: '\0627\0644\062D\0627\0644\0629'; /* الحالة */
+    content: '\0627\0644\062D\0627\0644\0629';
+    /* الحالة */
   }
 
   .permits-table .export-cell::before {
-    content: '\0637\0628\0627\0639\0629'; /* طباعة */
+    content: '\0637\0628\0627\0639\0629';
+    /* طباعة */
   }
 
   .permits-table .actions-cell::before {
-    content: '\0627\0644\0625\062C\0631\0627\0621\0627\062A'; /* الإجراءات */
+    content: '\0627\0644\0625\062C\0631\0627\0621\0627\062A';
+    /* الإجراءات */
   }
 
   /* User cell mobile layout */
@@ -1085,7 +1098,8 @@
   }
 
   .btn-action {
-    min-width: 44px; /* Touch-friendly size */
+    min-width: 44px;
+    /* Touch-friendly size */
     min-height: 44px;
     padding: 0.75rem;
   }
@@ -1143,6 +1157,7 @@
 
 /* Desktop Screens (1024px and up) */
 @media (min-width: 1024px) {
+
   /* Original desktop styles apply */
   .filters-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1166,6 +1181,7 @@
 
 /* Print Styles */
 @media print {
+
   .filters-card,
   .btn-primary,
   .action-buttons,
@@ -1195,4 +1211,15 @@
   .page-title {
     font-size: 1.25rem;
   }
+}
+
+/* Action Button Disabled State */
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #cbd5e0 !important;
+  color: #718096 !important;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none !important;
 }

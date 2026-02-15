@@ -8,7 +8,10 @@ import {
     TopStatisticsDto,
     ComplianceMetricsDto,
     AlertsSummaryDto,
-    CalendarViewDto
+    CalendarViewDto,
+    ShSignatureStatsDto,
+    UnsignedPermitDto,
+    PaginatedResult
 } from '../models/dashboard-models';
 
 export interface DashboardData {
@@ -20,6 +23,8 @@ export interface DashboardData {
     alerts: AlertsSummaryDto | null;
     compliance: ComplianceMetricsDto | null;
     calendar?: CalendarViewDto | null;
+    shSignatureStats?: ShSignatureStatsDto | null;
+    unsignedPermits?: PaginatedResult<UnsignedPermitDto> | null;
 }
 
 @Injectable({

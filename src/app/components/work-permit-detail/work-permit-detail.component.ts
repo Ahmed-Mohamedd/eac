@@ -246,8 +246,9 @@ export class WorkPermitDetailComponent implements OnInit {
 
     const status = this.permit.workPermitStatusName || '';
 
-    // Block all Pending permits (even if signed - must wait for approval)
-    if (status === 'قيد الانتظار') {
+    // Block Pending, Rejected, and Cancelled permits
+    const blockedStatuses = ['قيد الانتظار', 'مرفوض', 'ملغي'];
+    if (blockedStatuses.includes(status)) {
       return false;
     }
 
