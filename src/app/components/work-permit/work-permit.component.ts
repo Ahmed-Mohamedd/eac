@@ -29,6 +29,10 @@ export class WorkPermitComponent implements OnInit {
   isLoadingPermit = false;
   isLoadingDepartments = false;
 
+  // Clone mode — set when navigated with ?cloneFrom=<sourceId>
+  isCloneMode = false;
+  cloneSourceId: number | null = null;
+
   constructor(
     private fb: FormBuilder,
     private workPermitService: WorkPermitService,
@@ -121,20 +125,28 @@ export class WorkPermitComponent implements OnInit {
     // Initialize with 1 empty security requirement slot (user can add up to 8 total)
     this.securityRequirements.push(this.fb.control(''));
 
-    // Check for ID parameter
+    // Check for ID parameter (edit mode)
     this.route.paramMap.subscribe(params => {
       this.permitId = params.get('id');
 
       if (this.permitId) {
         this.loadPermit(this.permitId);
       } else {
-        // Pre-fill user data only for new permits
-        const currentUser = this.authService.getCurrentUser();
-        if (currentUser) {
-          this.permitForm.patchValue({
-            department: currentUser.department,
-            supervisor: currentUser.userName
-          });
+        // Check for clone mode (?cloneFrom=<sourceId>)
+        const cloneFromId = this.route.snapshot.queryParamMap.get('cloneFrom');
+        if (cloneFromId) {
+          this.isCloneMode = true;
+          this.cloneSourceId = +cloneFromId;
+          this.loadPermitForClone(this.cloneSourceId);
+        } else {
+          // New blank permit — pre-fill user data
+          const currentUser = this.authService.getCurrentUser();
+          if (currentUser) {
+            this.permitForm.patchValue({
+              department: currentUser.department,
+              supervisor: currentUser.userName
+            });
+          }
         }
       }
     });
@@ -288,6 +300,120 @@ export class WorkPermitComponent implements OnInit {
         this.toastService.error('حدث خطأ أثناء تحميل التصريح');
       }
     });
+  }
+
+  /**
+   * Load a pre-filled CreateWorkPermitDto from an existing permit (clone mode).
+   * All safety/work fields are copied; dates and signature fields are cleared.
+   * The form is pre-filled so the user only needs to enter new dates before submitting.
+   */
+  loadPermitForClone(sourceId: number): void {
+    this.isLoadingPermit = true;
+    this.workPermitService.getWorkPermitForClone(sourceId).subscribe({
+      next: (dto) => {
+        this.isLoadingPermit = false;
+        this.prefillFromClone(dto);
+      },
+      error: () => {
+        this.isLoadingPermit = false;
+        this.toastService.error('فشل تحميل التصريح المصدر للاستنساخ');
+      }
+    });
+  }
+
+  /**
+   * Pre-fills the form from a clone DTO. Mirrors the patchValue structure used in loadPermit().
+   * Date/time fields are explicitly cleared so the user must enter new values.
+   */
+  private prefillFromClone(dto: any): void {
+    const locationIds: number[] = dto.workLocationIds || [];
+
+    this.permitForm.patchValue({
+      location: {
+        airfield: locationIds.includes(1),
+        entrance: locationIds.includes(2),
+        buildings: locationIds.includes(3)
+      },
+      department: dto.departmentId,
+      supervisor: dto.supervisorEng,
+      workDescription: dto.workDescription,
+      workLocation: dto.workLocation || '',
+      equipment: dto.usedTools || '',
+      hazards: dto.potentialWorkRisks || '',
+      timings: {
+        date: '',             // must be entered by user
+        time: '',             // must be entered by user
+        expectedEndDate: '',  // must be entered by user
+        expectedEndTime: '',  // must be entered by user
+        actualEndDate: '',
+        actualEndTime: '',
+        dailyWorkStart: dto.dailyWorkHourFrom || '',
+        dailyWorkEnd: dto.dailyWorkHourTo || ''
+      },
+      nature: {
+        routine: dto.isRoutineWork,
+        nonRoutine: !dto.isRoutineWork
+      },
+      heights: {
+        maxHeight: dto.highestExpectedRise || '',
+        scaffoldingDesc: dto.descriptionOfUsedScaffoldingAndLadders || ''
+      },
+      confinedSpaces: {
+        description: dto.descriptionOfClosedPlace || '',
+        ventilation: dto.ventilation || ''
+      },
+      hotWork: {
+        welding: dto.welding || false,
+        cutting: dto.cutting || false,
+        other: dto.otherHotWork || ''
+      },
+      safetyRequirements: {
+        fireRisk: dto.fireRisk || '',
+        ppe: {
+          helmet:    { required: dto.helmetAndShoes,        notRequired: !dto.helmetAndShoes },
+          mask:      { required: dto.gasDustMask,           notRequired: !dto.gasDustMask },
+          gloves:    { required: dto.gloves,                notRequired: !dto.gloves },
+          goggles:   { required: dto.goggles,               notRequired: !dto.goggles },
+          harness:   { required: dto.harness,               notRequired: !dto.harness },
+          faceShield:{ required: dto.faceShield,            notRequired: !dto.faceShield },
+          earPlugs:  { required: dto.earPlugs,              notRequired: !dto.earPlugs },
+          other:     { required: dto.otherSafetyEquipment,  notRequired: !dto.otherSafetyEquipment }
+        },
+        fireSafety: {
+          extinguisher: { required: dto.fireExtinguisherRequired,  notRequired: !dto.fireExtinguisherRequired },
+          waterSand:    { required: dto.waterSandRequired,          notRequired: !dto.waterSandRequired },
+          ventilation:  { required: dto.adequateVentilationRequired, notRequired: !dto.adequateVentilationRequired },
+          fireman:      { required: dto.firefighterRequired,        notRequired: !dto.firefighterRequired },
+          other:        { required: dto.otherMeansRequired,         notRequired: !dto.otherMeansRequired }
+        }
+      },
+      signatures: {
+        engineer: dto.supervisorEng,
+        phone: dto.phoneNumber || '',
+        signature: '',          // contractor must re-sign
+        contractor: '',         // cleared
+        safetyOfficer: ''
+      }
+    });
+
+    // Pre-fill workers list
+    this.workers.clear();
+    if (dto.workers && dto.workers.length > 0) {
+      dto.workers.forEach((w: any) => this.workers.push(this.fb.control(w.workerName)));
+    }
+    while (this.workers.length < 6) {
+      this.workers.push(this.fb.control(''));
+    }
+
+    // Pre-fill security requirements
+    this.securityRequirements.clear();
+    if (dto.securityRequirements && dto.securityRequirements.length > 0) {
+      dto.securityRequirements.forEach((req: string) => this.securityRequirements.push(this.fb.control(req)));
+    } else {
+      this.securityRequirements.push(this.fb.control(''));
+    }
+
+    this.toastService.success(`تم تحميل بيانات التصريح #${this.cloneSourceId} — يرجى إدخال التواريخ والأوقات`);
   }
 
   get workers() {

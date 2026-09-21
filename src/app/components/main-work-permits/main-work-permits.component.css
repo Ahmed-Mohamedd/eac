@@ -1223,3 +1223,157 @@
   box-shadow: none;
   transform: none !important;
 }
+
+/* ─── Kebab (⋮) Actions Dropdown ─────────────────────────────────────────── */
+
+.actions-cell {
+  position: relative;
+}
+
+.actions-cell.menu-open,
+.permits-table tbody tr:has(.menu-open) {
+  position: relative;
+  z-index: 1000 !important;
+}
+
+.kebab-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-kebab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-kebab:hover,
+.btn-kebab[aria-expanded="true"] {
+  background: #f1f5f9;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* Dropdown panel — 100% solid background with sharp shadow */
+.kebab-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  min-width: 170px;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.22), 0 8px 10px -6px rgba(0, 0, 0, 0.12);
+  z-index: 9999 !important;
+  overflow: hidden;
+  animation: dropdownSlide 0.15s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.kebab-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background-color: #ffffff !important;
+  border: none;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  opacity: 1 !important;
+}
+
+.kebab-item:hover:not(:disabled) {
+  background-color: #f1f5f9 !important;
+  color: #0f172a;
+}
+
+.kebab-item:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed;
+}
+
+/* Clone item — teal accent */
+.kebab-item--clone {
+  color: #0d9488;
+}
+
+.kebab-item--clone:hover:not(:disabled) {
+  background-color: #ccfbf1 !important;
+  color: #0f766e;
+}
+
+/* Status item — amber accent */
+.kebab-item--status {
+  color: #d97706;
+}
+
+.kebab-item--status:hover:not(:disabled) {
+  background-color: #fef3c7 !important;
+  color: #b45309;
+}
+
+/* Thin divider between groups */
+.kebab-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.25rem 0;
+}
+
+/* ─── Clone Mode — Banner & Highlighted Date Fields ──────────────────────── */
+
+.clone-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #e3f9fa 0%, #d4f4f7 100%);
+  border: 1.5px solid #0694a2;
+  border-radius: 12px;
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #046c74;
+  font-size: 0.95rem;
+  font-weight: 600;
+  animation: cloneBannerPulse 2s ease-in-out 2;
+}
+
+.clone-banner .clone-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+@keyframes cloneBannerPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 148, 162, 0.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(6, 148, 162, 0); }
+}
+
+/* Date/time input fields that must be filled when in clone mode */
+.clone-required-field {
+  border-color: #f39c12 !important;
+  background: #fffbf0 !important;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15) !important;
+  animation: cloneFieldPulse 1.8s ease-in-out 3;
+}
+
+@keyframes cloneFieldPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15); }
+  50%       { box-shadow: 0 0 0 6px rgba(243, 156, 18, 0.08); }
+}

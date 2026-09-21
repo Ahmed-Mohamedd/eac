@@ -235,6 +235,29 @@ export class WorkPermitDetailComponent implements OnInit {
   }
 
   /**
+   * Check if current permit can be cloned.
+   * Clone is only allowed on Signed or Completed/In-Progress/Approved permits —
+   * not on Pending, Rejected, or Cancelled.
+   */
+  canClonePermit(): boolean {
+    if (!this.permit) return false;
+    // Show clone if permit has been signed by S&H
+    if (this.permit.isSigned === true) return true;
+    // Also allow for statuses that are only reachable after signing
+    const clonableStatuses = ['مكتمل', 'موافق عليه', 'قيد التنفيذ'];
+    return clonableStatuses.includes(this.permit.workPermitStatusName || '');
+  }
+
+  /**
+   * Navigate to create-new permit form, pre-filled from this permit (clone mode).
+   */
+  clonePermit(): void {
+    this.router.navigate(['/work-permit/new'], {
+      queryParams: { cloneFrom: this.permitId }
+    });
+  }
+
+  /**
    * Check if permit can be exported to Word
    * Business Rule: 
    * - Pending = NEVER allowed (must be approved first, even if signed)

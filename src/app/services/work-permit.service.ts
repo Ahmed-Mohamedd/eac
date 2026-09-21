@@ -92,4 +92,12 @@ export class WorkPermitService {
             shUserId
         });
     }
+    /**
+     * Get a pre-filled CreateWorkPermitDto from an existing (source) permit.
+     * Used by Clone feature — only date/time and signature fields are cleared.
+     * The result is used to pre-fill the create form; the user must enter new dates before submitting.
+     */
+    getWorkPermitForClone(sourceId: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/clone/${sourceId}`);
+    }
 }

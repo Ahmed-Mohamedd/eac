@@ -48,6 +48,15 @@
                                     </div>
                                 </div>
 
+                                <!-- Clone Mode Banner — shown when form is pre-filled from an existing permit -->
+                                <div *ngIf="isCloneMode" class="clone-banner">
+                                    <span class="clone-icon">📋</span>
+                                    <span>
+                                        تم الاستنساخ من تصريح رقم <strong>#{{ cloneSourceId }}</strong>
+                                        — يرجى إدخال <strong>التواريخ والأوقات الجديدة</strong> قبل الحفظ
+                                    </span>
+                                </div>
+
                                 <!-- Main Content Area -->
                                 <div class="document-body">
                                     <!-- Work Location Section -->
@@ -132,9 +141,15 @@
                                         <div class="timing-grid">
                                             <div class="timing-row">
                                                 <label>التاريخ:<span class="required-mark">*</span></label>
-                                                <input type="date" class="field-input date" formControlName="date">
+                                                <input type="date" formControlName="date"
+                                                    [class.field-input]="true"
+                                                    [class.date]="true"
+                                                    [class.clone-required-field]="isCloneMode">
                                                 <label>الساعه:<span class="required-mark">*</span></label>
-                                                <input type="time" class="field-input time" formControlName="time">
+                                                <input type="time" formControlName="time"
+                                                    [class.field-input]="true"
+                                                    [class.time]="true"
+                                                    [class.clone-required-field]="isCloneMode">
                                             </div>
                                             <div class="error-message" *ngIf="isFieldInvalid('timings.date')">
                                                 {{ getFieldError('timings.date') }}
@@ -148,11 +163,15 @@
                                             </div>
                                             <div class="timing-row">
                                                 <label>التاريخ:<span class="required-mark">*</span></label>
-                                                <input type="date" class="field-input date"
-                                                    formControlName="expectedEndDate">
+                                                <input type="date" formControlName="expectedEndDate"
+                                                    [class.field-input]="true"
+                                                    [class.date]="true"
+                                                    [class.clone-required-field]="isCloneMode">
                                                 <label>الساعه:<span class="required-mark">*</span></label>
-                                                <input type="time" class="field-input time"
-                                                    formControlName="expectedEndTime">
+                                                <input type="time" formControlName="expectedEndTime"
+                                                    [class.field-input]="true"
+                                                    [class.time]="true"
+                                                    [class.clone-required-field]="isCloneMode">
                                             </div>
 
                                             <div class="timing-row-label">
@@ -180,6 +199,7 @@
                                             </div>
                                         </div>
                                     </section>
+
 
                                     <!-- Work Description -->
                                     <div class="full-field">

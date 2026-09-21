@@ -126,7 +126,7 @@
                 {{ permit.workPermitStatusName }}
               </span>
             </td>
-            <!-- Export to Word button -->
+            <!-- Export to Word (kept as quick-access icon before ⋮ menu) -->
             <td class="export-cell">
               <button class="btn-action btn-export" (click)="exportToWord(permit.id)"
                 [disabled]="!canExportPermit(permit)" [title]="getExportTooltip(permit)">
@@ -137,38 +137,65 @@
                 </svg>
               </button>
             </td>
-            <td class="actions-cell">
-              <div class="action-buttons">
-                <!-- View button -->
-                <button class="btn-action btn-view" (click)="viewDetails(permit.id)" title="عرض التفاصيل">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
+
+            <!-- ⋮ Actions dropdown -->
+            <td class="actions-cell" [class.menu-open]="openMenuId === permit.id">
+              <div class="kebab-wrapper">
+                <!-- Trigger button -->
+                <button class="btn-kebab" (click)="toggleMenu(permit.id, $event)" title="المزيد من الخيارات"
+                  [attr.aria-expanded]="openMenuId === permit.id">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                   </svg>
                 </button>
-                <!-- Edit button -->
-                <button class="btn-action btn-edit" (click)="editPermit(permit.id)" title="تعديل التصريح">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-                <!-- Status button (Admin or User with valid transitions) -->
-                <button *ngIf="canChangeStatus(permit)" class="btn-action btn-status" (click)="openStatusModal(permit)"
-                  title="تغيير الحالة">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                  </svg>
-                </button>
+
+                <!-- Dropdown panel -->
+                <div class="kebab-menu" *ngIf="openMenuId === permit.id" (click)="$event.stopPropagation()">
+
+                  <!-- View -->
+                  <button class="kebab-item" (click)="viewDetails(permit.id); openMenuId = null">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    عرض
+                  </button>
+
+                  <!-- Edit -->
+                  <button class="kebab-item" (click)="editPermit(permit.id); openMenuId = null">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    تعديل
+                  </button>
+
+                  <!-- Clone — only for signed / completed permits -->
+                  <button class="kebab-item kebab-item--clone" *ngIf="canClonePermit(permit)"
+                    (click)="clonePermit(permit.id)" title="استنساخ التصريح لدورة عمل جديدة">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    استنساخ
+                  </button>
+
+                  <!-- Change Status -->
+                  <button class="kebab-item kebab-item--status" *ngIf="canChangeStatus(permit)"
+                    (click)="openStatusModal(permit); openMenuId = null">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    تغيير الحالة
+                  </button>
+
+                </div>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
 
     <!-- Pagination -->
     <div *ngIf="!isLoading && permits.length > 0" class="pagination">

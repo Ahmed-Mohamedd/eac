@@ -747,3 +747,18 @@ tr:last-child td {
   transform: none;
   background: #f3f4f6;
 }
+
+/* Clone button styling */
+.btn-clone {
+  background: #0d9488;
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+}
+
+.btn-clone:hover {
+  background: #0f766e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
+}
+

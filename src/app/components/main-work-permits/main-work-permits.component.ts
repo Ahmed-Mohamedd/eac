@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -45,6 +45,9 @@ export class MainWorkPermitsComponent implements OnInit {
   fromDate = '';
   toDate = '';
 
+  // Actions dropdown — tracks which row's ⋮ menu is open (null = all closed)
+  openMenuId: number | null = null;
+
   // Status Change Modal
   showStatusModal = false;
   selectedPermit: WorkPermitListDto | null = null;
@@ -58,6 +61,12 @@ export class MainWorkPermitsComponent implements OnInit {
     public authService: AuthService,
     private toastService: ToastService
   ) { }
+
+  /** Close any open ⋮ dropdown when the user clicks anywhere on the page */
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.closeMenus();
+  }
 
   ngOnInit(): void {
     this.loadDepartments();
@@ -159,6 +168,50 @@ export class MainWorkPermitsComponent implements OnInit {
 
   createNewPermit(): void {
     this.router.navigate(['/work-permit/new']);
+  }
+
+  // ── Actions Dropdown ────────────────────────────────────────────────────────
+
+  /**
+   * Toggle the ⋮ actions dropdown for a specific row.
+   * Closes any other open dropdown first.
+   */
+  toggleMenu(permitId: number, event: Event): void {
+    event.stopPropagation(); // Prevent bubbling to document click handler
+    this.openMenuId = this.openMenuId === permitId ? null : permitId;
+  }
+
+  /**
+   * Close all open dropdowns (called on document click via host listener).
+   */
+  closeMenus(): void {
+    this.openMenuId = null;
+  }
+
+  // ── Clone ───────────────────────────────────────────────────────────────────
+
+  /**
+   * Determines if Clone action is available for a given permit.
+   * Clone is shown only for signed permits or permits in Approved/In-Progress/Completed status
+   * (these statuses are only reachable after S&H signing — so they are safe to clone).
+   * Pending, Rejected, and Cancelled permits cannot be cloned.
+   */
+  canClonePermit(permit: WorkPermitListDto): boolean {
+    if (permit.isSigned === true) return true;
+    const clonableStatuses = ['مكتمل', 'موافق عليه', 'قيد التنفيذ'];
+    return clonableStatuses.includes(permit.workPermitStatusName || '');
+  }
+
+  /**
+   * Navigate to the create-permit form pre-filled with data from the given permit.
+   * The form detects the ?cloneFrom= query param and pre-populates all fields
+   * except dates, which the user must enter for the new cycle.
+   */
+  clonePermit(permitId: number): void {
+    this.openMenuId = null; // close the dropdown
+    this.router.navigate(['/work-permit/new'], {
+      queryParams: { cloneFrom: permitId }
+    });
   }
 
   getStatusClass(statusName: string): string {
