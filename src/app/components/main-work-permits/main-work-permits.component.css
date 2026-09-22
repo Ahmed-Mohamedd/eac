@@ -1097,6 +1097,21 @@
     justify-content: flex-start;
   }
 
+  .actions-cell {
+    position: relative;
+  }
+
+  .kebab-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .kebab-menu {
+    right: 0 !important;
+    left: auto !important;
+    max-width: calc(100vw - 32px);
+  }
+
   .btn-action {
     min-width: 44px;
     /* Touch-friendly size */
